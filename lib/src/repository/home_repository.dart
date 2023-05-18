@@ -11,6 +11,7 @@ abstract class RepositoryHome {
     String? sortByNextIssueDeadline,
     String? sortByAccept,
     String? sortByGeneral,
+    String? search,
   );
 }
 
@@ -27,6 +28,7 @@ class HomeRepository implements RepositoryHome {
     String? sortByNextIssueDeadline,
     String? sortByAccept,
     String? sortByGeneral,
+    String? search,
   ) {
     return homeProvider.getJournals(
       isSport,
@@ -37,6 +39,7 @@ class HomeRepository implements RepositoryHome {
       sortByNextIssueDeadline,
       sortByAccept,
       sortByGeneral,
+      search,
     );
   }
 }

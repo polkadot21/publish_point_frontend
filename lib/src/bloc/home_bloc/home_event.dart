@@ -14,6 +14,7 @@ class AllSportJournalsEvent extends HomeEvent {
   final String? sortByNextIssueDeadline;
   final String? sortByAccept;
   final String? sortByGeneral;
+  final String? search;
 
   AllSportJournalsEvent(
     this.page,
@@ -23,6 +24,7 @@ class AllSportJournalsEvent extends HomeEvent {
     this.sortByNextIssueDeadline,
     this.sortByAccept,
     this.sortByGeneral,
+    this.search,
   );
 
   @override
@@ -41,6 +43,7 @@ class AllInfoJournalsEvent extends HomeEvent {
   final String? sortByNextIssueDeadline;
   final String? sortByAccept;
   final String? sortByGeneral;
+  final String? search;
 
   AllInfoJournalsEvent(
     this.page,
@@ -50,6 +53,7 @@ class AllInfoJournalsEvent extends HomeEvent {
     this.sortByNextIssueDeadline,
     this.sortByAccept,
     this.sortByGeneral,
+    this.search,
   );
 
   @override

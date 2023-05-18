@@ -8,6 +8,7 @@ import 'package:publishpoint/src/widget/app/support_button.dart';
 class MainAppBar extends StatelessWidget {
   final Function(int screenIndex) onMenuTap;
   final Function(bool active) onSearch;
+  final Function(String obj) onChanged;
   final TextEditingController controller;
   final bool onSearchActive;
 
@@ -17,6 +18,7 @@ class MainAppBar extends StatelessWidget {
     required this.controller,
     required this.onSearchActive,
     required this.onSearch,
+    required this.onChanged,
   }) : super(key: key);
 
   @override
@@ -124,6 +126,7 @@ class MainAppBar extends StatelessWidget {
             onTap: () {
               onSearch(true);
             },
+            onChanged: onChanged,
             style: const TextStyle(
               fontFamily: AppColor.fontFamily,
               fontWeight: FontWeight.w400,
@@ -199,6 +202,7 @@ class MainAppBar extends StatelessWidget {
                   onMenuTap: (index) {
                     onMenuTap(index);
                   },
+                  onSearch: onChanged,
                 );
               },
               child: Container(

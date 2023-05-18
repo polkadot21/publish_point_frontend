@@ -26,6 +26,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         event.sortByNextIssueDeadline,
         event.sortByAccept,
         event.sortByGeneral,
+        event.search,
       );
       if (response.isSuccess) {
         JournalListModel data = JournalListModel.fromJson(
@@ -53,6 +54,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         event.sortByNextIssueDeadline,
         event.sortByAccept,
         event.sortByGeneral,
+        event.search,
       );
       if (response.isSuccess) {
         JournalListModel data = JournalListModel.fromJson(

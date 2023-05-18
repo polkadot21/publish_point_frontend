@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -35,6 +37,7 @@ class _MainScreenState extends State<MainScreen> {
   final textController = TextEditingController();
   bool isListOpen = true, isAboutMagazineOpen = false, onSearchActive = false;
   String selectedSort = '', sortType = 'asc';
+  Timer? searchOnStoppedTyping;
 
   int sportPage = 1, infoPage = 1, perPage = 10;
   bool addSportData = true,
@@ -46,7 +49,8 @@ class _MainScreenState extends State<MainScreen> {
       nextDateSort,
       nextDateDeadlineSort,
       acceptSort,
-      generalSort;
+      generalSort,
+      search;
 
   JournalListModel sportData = JournalListModel.fromJson({});
   JournalListModel infoData = JournalListModel.fromJson({});
@@ -58,7 +62,8 @@ class _MainScreenState extends State<MainScreen> {
     });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
+              _scrollController.position.maxScrollExtent &&
+          screenIndex == 0) {
         if (currentIndex == 0) {
           _getMoreSportData();
         } else {
@@ -115,8 +120,40 @@ class _MainScreenState extends State<MainScreen> {
                 controller: textController,
                 onSearchActive: onSearchActive,
                 onSearch: (bool active) {
-                  onSearchActive = active;
-                  setState(() {});
+                  setState(() {
+                    onSearchActive = active;
+                  });
+                  if (!active) {
+                    search = null;
+                    if (currentIndex == 0) {
+                      _getMoreSportData();
+                    } else {
+                      _getMoreInfoData();
+                    }
+                  }
+                },
+                onChanged: (String obj) {
+                  if (screenIndex == 0) {
+                    const duration = Duration(milliseconds: 1200);
+                    if (searchOnStoppedTyping != null) {
+                      searchOnStoppedTyping!.cancel();
+                    }
+                    searchOnStoppedTyping = Timer(
+                      duration,
+                      () {
+                        search = obj;
+                        if (currentIndex == 0) {
+                          sportPage = 1;
+                          loadSportData = false;
+                          _getMoreSportData();
+                        } else {
+                          infoPage = 1;
+                          loadInfoData = false;
+                          _getMoreInfoData();
+                        }
+                      },
+                    );
+                  }
                 },
               ),
             ),
@@ -486,6 +523,7 @@ class _MainScreenState extends State<MainScreen> {
           nextDateDeadlineSort,
           acceptSort,
           generalSort,
+          search,
         ),
       );
       sportPage++;
@@ -504,6 +542,7 @@ class _MainScreenState extends State<MainScreen> {
           nextDateDeadlineSort,
           acceptSort,
           generalSort,
+          search,
         ),
       );
       infoPage++;

@@ -1,9 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:publishpoint/src/constants/app_color.dart';
 import 'package:publishpoint/src/constants/responsivness.dart';
-import 'package:publishpoint/src/widget/app/custom_button.dart';
+import 'package:publishpoint/src/widget/app/support_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactsScreen extends StatelessWidget {
@@ -49,33 +48,7 @@ class ContactsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  FittedBox(
-                    child: CustomButton(
-                      text: 'text',
-                      onTap: () {},
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'Задать вопрос',
-                            style: TextStyle(
-                              fontFamily: AppColor.fontFamily,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                              color: AppColor.dark,
-                              height: 18 / (14),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          SvgPicture.asset(
-                            'assets/icons/send.svg',
-                            width: 16,
-                            height: 16,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  const FittedBox(child: SupportButton()),
                 ],
               ),
             ),

@@ -13,6 +13,7 @@ class HomeProvider extends ApiProvider {
     String? sortByNextIssueDeadline,
     String? sortByAccept,
     String? sortByGeneral,
+    String? search,
   ) async {
     String params = 'by_price_per_page=asc';
 
@@ -28,6 +29,8 @@ class HomeProvider extends ApiProvider {
       params = 'by_accepted_perc=$sortByAccept';
     } else if (sortByGeneral != null) {
       params = 'by_general_score=$sortByGeneral';
+    } else if (search != null) {
+      params += '&search=$search';
     }
     params = mainParam + params;
     String url = "${baseUrl}journals/"

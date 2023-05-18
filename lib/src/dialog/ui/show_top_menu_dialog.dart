@@ -5,10 +5,12 @@ import 'package:publishpoint/src/widget/app/support_button.dart';
 
 class ShowTopMenuDialog extends StatefulWidget {
   final Function(int index) onMenuTap;
+  final Function(String obj) onSearch;
 
   const ShowTopMenuDialog({
     Key? key,
     required this.onMenuTap,
+    required this.onSearch,
   }) : super(key: key);
 
   @override
@@ -50,6 +52,7 @@ class _ShowTopMenuDialogState extends State<ShowTopMenuDialog> {
                       onSearchActive = true;
                       setState(() {});
                     },
+                    onChanged: widget.onSearch,
                     style: const TextStyle(
                       fontFamily: AppColor.fontFamily,
                       fontWeight: FontWeight.w400,

@@ -6,6 +6,7 @@ class TopDialog {
     BuildContext context, {
     bool barrierDismissible = true,
     required Function(int index) onMenuTap,
+    required Function(String obj) onSearch,
   }) {
     return showGeneralDialog<T?>(
       context: context,
@@ -19,6 +20,7 @@ class TopDialog {
         bottom: false,
         child: ShowTopMenuDialog(
           onMenuTap: onMenuTap,
+          onSearch: onSearch,
         ),
       ),
       transitionBuilder: (
@@ -49,6 +51,7 @@ class TopDialog {
                     children: [
                       ShowTopMenuDialog(
                         onMenuTap: onMenuTap,
+                        onSearch: onSearch,
                       ),
                     ],
                   ),
