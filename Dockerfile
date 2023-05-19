@@ -1,24 +1,23 @@
-FROM debian:stable-slim
-
-# Install required dependencies
-RUN apt-get update && apt-get install -y curl git unzip xz-utils libglu1-mesa
-
-# Install Flutter SDK
-RUN git clone https://github.com/flutter/flutter.git /flutter
-ENV PATH="/flutter/bin:${PATH}"
-RUN flutter config --no-analytics && flutter precache
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the Flutter web app code into the container
-COPY . .
-
-# Build the Flutter web app
+#Stage 1 - Install dependencies and build the app in a build environment
+FROM debian:latest AS build-env
+# Install flutter dependencies
+RUN apt-get update && apt-get install -y \
+    curl git wget unzip libgconf-2-4 gdb libglu1-mesa \
+    fonts-droid-fallback python3 sed && apt-get clean
+    
+# Clone the flutter repo
+RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
+# Set flutter path
+ENV PATH="${PATH}:/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin"
+# Run flutter doctor
+RUN flutter doctor -v
+RUN flutter channel master
+RUN flutter upgrade
+# Copy files to container and build
+RUN mkdir /app/
+COPY . /app/
+WORKDIR /app/
 RUN flutter build web
-
-# Expose the Flutter web app's default port
-EXPOSE 3000
-
-# Run the Flutter web app
-CMD ["flutter", "run", "-d", "web-server", "-p", "3000", "--no-sound-null-safety"]
+# Stage 2 - Create the run-time image
+FROM nginx:1.21.1-alpine
+COPY --from=build-env /app/build/web /usr/share/nginx/html
