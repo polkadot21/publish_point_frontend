@@ -53,11 +53,11 @@ class _ShowTopMenuDialogState extends State<ShowTopMenuDialog> {
                       setState(() {});
                     },
                     onChanged: widget.onSearch,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppColor.fontFamily,
                       fontWeight: FontWeight.w400,
                       fontSize: 15,
-                      color: AppColor.dark,
+                      color: onSearchActive ? AppColor.dark : AppColor.white,
                       height: 18 / (15),
                     ),
                     decoration: InputDecoration(
@@ -84,6 +84,7 @@ class _ShowTopMenuDialogState extends State<ShowTopMenuDialog> {
                         onTap: () {
                           if (onSearchActive) {
                             onSearchActive = false;
+                            controller.clear();
                             setState(() {});
                           }
                         },
@@ -97,7 +98,7 @@ class _ShowTopMenuDialogState extends State<ShowTopMenuDialog> {
                           height: 16,
                         ),
                       ),
-                      hintText: 'Поиск...',
+                      hintText: onSearchActive ? '' : 'Поиск...',
                       hintStyle: TextStyle(
                         fontFamily: AppColor.fontFamily,
                         fontWeight: FontWeight.w400,

@@ -10,60 +10,116 @@ class ContactsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (ResponsiveWidget.isSmallScreen(context) ||
-                      ResponsiveWidget.isMediumScreen(context))
-                    Image.asset(
-                      'assets/images/logo_image.png',
-                      height:
-                          ResponsiveWidget.isSmallScreen(context) ? 400 : 500,
-                      width:
-                          ResponsiveWidget.isSmallScreen(context) ? 400 : 500,
-                    ),
-                  const Text(
-                    'Наши контакты',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 48,
-                      color: AppColor.dark,
-                      height: 58 / (48),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Рецензируемое научное издание, которое предоставляет '
-                    'возможность опубликовать свои научные достижения аспирантам',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                      color: AppColor.dark,
-                      height: 24 / (16),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const FittedBox(child: SupportButton()),
-                ],
-              ),
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 24,
+            horizontal: 20,
+          ),
+          child: Container(
+            width: MediaQuery.of(context).size.width -
+                ResponsiveWidget.marginHorizontal(context),
+            constraints: BoxConstraints(
+              minHeight: ResponsiveWidget.isSmallScreen(context)
+                  ? 360
+                  : width < 1600
+                      ? 480
+                      : 518,
             ),
-            if (ResponsiveWidget.isLargeScreen(context) ||
-                ResponsiveWidget.isCustomSize(context))
-              Image.asset(
-                'assets/images/logo_image.png',
-                height: ResponsiveWidget.isCustomSize(context) ? 450 : 650,
-                width: ResponsiveWidget.isCustomSize(context) ? 450 : 650,
-              ),
-          ],
+            child: Stack(
+              alignment: Alignment.centerLeft,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: SizedBox(
+                    width: ResponsiveWidget.isCustomSize(context) ||
+                            ResponsiveWidget.isLargeScreen(context)
+                        ? MediaQuery.of(context).size.width / 2 -
+                            ResponsiveWidget.marginHorizontal(context)
+                        : MediaQuery.of(context).size.width -
+                            ResponsiveWidget.marginHorizontal(context),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (ResponsiveWidget.isSmallScreen(context) ||
+                            ResponsiveWidget.isMediumScreen(context))
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              right: 60,
+                            ),
+                            child: Image.asset(
+                              'assets/images/logo_image2.png',
+                            ),
+                          ),
+                        const Text(
+                          'Наши контакты',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 48,
+                            color: AppColor.dark,
+                            height: 58 / (48),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Не имеет значения, насколько сложной является область вашего исследования '
+                          '- мы здесь, чтобы помочь Вам пройти путь к научной публикации.',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
+                            color: AppColor.dark,
+                            height: 24 / (16),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        const FittedBox(child: SupportButton()),
+                      ],
+                    ),
+                  ),
+                ),
+                if (ResponsiveWidget.isLargeScreen(context) ||
+                    ResponsiveWidget.isCustomSize(context))
+                  Positioned(
+                    width: ResponsiveWidget.isCustomSize(context)
+                        ? 580
+                        : width < 1600
+                            ? 720
+                            : 800,
+                    right: -16,
+                    height: ResponsiveWidget.isCustomSize(context)
+                        ? 360
+                        : width < 1600
+                            ? 480
+                            : 518,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        right: ResponsiveWidget.isLargeScreen(context)
+                            ? 140
+                            : ResponsiveWidget.isCustomSize(context)
+                                ? 112
+                                : ResponsiveWidget.isCustomSize(context)
+                                    ? 40
+                                    : 20,
+                      ),
+                      child: Image.asset(
+                        'assets/images/logo_image2.png',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
         if (ResponsiveWidget.isSmallScreen(context) ||
             ResponsiveWidget.isMediumScreen(context))
-          const SizedBox(height: 56),
+          const SizedBox(height: 56)
+        else
+          const SizedBox(height: 92),
         IntrinsicHeight(
           child: Row(
             children: [
@@ -95,7 +151,9 @@ class ContactsScreen extends StatelessWidget {
                         TextSpan(
                           children: [
                             const TextSpan(
-                              text: 'Если есть вопросы, то вам сюда ',
+                              text:
+                                  'Если у вас есть вопросы или нужна дополнительная информация, '
+                                  'пожалуйста, не стесняйтесь обращаться к нам по электронной почте ',
                               style: TextStyle(
                                 fontFamily: AppColor.fontFamily,
                                 fontWeight: FontWeight.w400,
@@ -117,7 +175,7 @@ class ContactsScreen extends StatelessWidget {
                                     throw "Could not launch $url";
                                   }
                                 },
-                              text: 'support@publish-point.ru',
+                              text: 'support@publish-point.ru.',
                               style: const TextStyle(
                                 fontFamily: AppColor.fontFamily,
                                 fontWeight: FontWeight.w500,
@@ -127,7 +185,8 @@ class ContactsScreen extends StatelessWidget {
                               ),
                             ),
                             const TextSpan(
-                              text: ' Свои научные достижения аспирантам',
+                              text:
+                                  ' Мы с нетерпением ждем возможности помочь вам!',
                               style: TextStyle(
                                 fontFamily: AppColor.fontFamily,
                                 fontWeight: FontWeight.w400,
@@ -176,7 +235,7 @@ class ContactsScreen extends StatelessWidget {
                           TextSpan(
                             children: [
                               const TextSpan(
-                                text: 'Если хотите почитать, то вам сюда ',
+                                text: 'Присоединяйтесь к нашему ',
                                 style: TextStyle(
                                   fontFamily: AppColor.fontFamily,
                                   fontWeight: FontWeight.w400,
@@ -189,7 +248,7 @@ class ContactsScreen extends StatelessWidget {
                                 mouseCursor: MaterialStateMouseCursor.clickable,
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () async {
-                                    var url = 'http://t.me/publishpointbot';
+                                    var url = 'https://t.me/publishpoint';
                                     if (await canLaunchUrl(Uri.parse(url))) {
                                       await launchUrl(
                                         Uri.parse(url),
@@ -199,7 +258,7 @@ class ContactsScreen extends StatelessWidget {
                                       throw "Could not launch $url";
                                     }
                                   },
-                                text: 'Publish_Point',
+                                text: 'Telegram-каналу',
                                 style: const TextStyle(
                                   fontFamily: AppColor.fontFamily,
                                   fontWeight: FontWeight.w500,
@@ -209,7 +268,10 @@ class ContactsScreen extends StatelessWidget {
                                 ),
                               ),
                               const TextSpan(
-                                text: ' Свои научные достижения аспирантам',
+                                text:
+                                    ' для получения самой свежей и актуальной информации о нашей '
+                                    'платформе! Мы регулярно обновляем канал новостями, советами и '
+                                    'подробностями о нашей работе. Мы ждем вас в нашем сообществе!',
                                 style: TextStyle(
                                   fontFamily: AppColor.fontFamily,
                                   fontWeight: FontWeight.w400,
@@ -234,7 +296,6 @@ class ContactsScreen extends StatelessWidget {
         if (ResponsiveWidget.isSmallScreen(context) ||
             ResponsiveWidget.isMediumScreen(context))
           Container(
-            width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               color: AppColor.white,
               borderRadius: BorderRadius.circular(24),
@@ -261,7 +322,7 @@ class ContactsScreen extends StatelessWidget {
                   TextSpan(
                     children: [
                       const TextSpan(
-                        text: 'Если хотите почитать, то вам сюда ',
+                        text: 'Присоединяйтесь к нашему ',
                         style: TextStyle(
                           fontFamily: AppColor.fontFamily,
                           fontWeight: FontWeight.w400,
@@ -272,8 +333,19 @@ class ContactsScreen extends StatelessWidget {
                       ),
                       TextSpan(
                         mouseCursor: MaterialStateMouseCursor.clickable,
-                        recognizer: TapGestureRecognizer()..onTap = () {},
-                        text: 'Publish_Point',
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () async {
+                            var url = 'http://t.me/publishpointbot';
+                            if (await canLaunchUrl(Uri.parse(url))) {
+                              await launchUrl(
+                                Uri.parse(url),
+                                mode: LaunchMode.externalApplication,
+                              );
+                            } else {
+                              throw "Could not launch $url";
+                            }
+                          },
+                        text: 'Telegram-каналу',
                         style: const TextStyle(
                           fontFamily: AppColor.fontFamily,
                           fontWeight: FontWeight.w500,
@@ -283,7 +355,10 @@ class ContactsScreen extends StatelessWidget {
                         ),
                       ),
                       const TextSpan(
-                        text: ' Свои научные достижения аспирантам',
+                        text:
+                            ' для получения самой свежей и актуальной информации о нашей '
+                            'платформе! Мы регулярно обновляем канал новостями, советами и '
+                            'подробностями о нашей работе. Мы ждем вас в нашем сообществе!',
                         style: TextStyle(
                           fontFamily: AppColor.fontFamily,
                           fontWeight: FontWeight.w400,

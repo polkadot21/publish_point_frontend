@@ -37,7 +37,7 @@ class WebTableItemWidget extends StatelessWidget {
                       height: 18 / 14,
                     ),
                   )
-                : Expanded(
+                : Flexible(
                     child: Text(
                       text,
                       style: TextStyle(

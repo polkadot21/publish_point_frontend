@@ -25,78 +25,110 @@ class WebTableRowWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            WebTableTextWidget(
-              width: 160,
-              color: AppColor.blue,
-              text: data.name,
+            Expanded(
+              flex: 3,
+              child: WebTableTextWidget(
+                width: 160,
+                color: AppColor.blue,
+                text: data.name,
+              ),
             ),
-            const Spacer(),
-            WebTableTextWidget(
-              width: 104,
-              text: '\$${data.pricePerPage}',
+            // const Spacer(),
+            const SizedBox(width: 16),
+            Expanded(
+              flex: 2,
+              child: WebTableTextWidget(
+                width: 104,
+                text: '\$${data.pricePerPage}',
+              ),
             ),
-            const Spacer(),
-            WebTableTextWidget(
-              width: 134,
-              text: data.nextIssueDate,
+            // const Spacer(),
+            const SizedBox(width: 16),
+            Expanded(
+              flex: 2,
+              child: WebTableTextWidget(
+                width: 134,
+                text: data.nextIssueDate,
+              ),
             ),
-            const Spacer(),
-            WebTableTextWidget(
-              width: 124,
-              text: data.nextIssueDeadline,
+            // const Spacer(),
+            const SizedBox(width: 16),
+            Expanded(
+              flex: 2,
+              child: WebTableTextWidget(
+                width: 124,
+                text: data.nextIssueDeadline,
+              ),
             ),
-            const Spacer(),
-            WebTableTextWidget(
-              width: 88,
-              text: '${data.acceptedPerc}${data.acceptedPercUnits}',
+            const SizedBox(width: 16),
+            // const Spacer(),
+            Expanded(
+              flex: 2,
+              child: WebTableTextWidget(
+                width: 88,
+                text: '${data.acceptedPerc}${data.acceptedPercUnits}',
+              ),
             ),
-            const Spacer(),
-            WebTableTextWidget(
-              width: 76,
-              text: '${data.generalScore}${data.generalScoreUnits}',
+            // const Spacer(),
+            const SizedBox(width: 16),
+            Expanded(
+              flex: 2,
+              child: WebTableTextWidget(
+                width: 76,
+                text: '${data.generalScore}${data.generalScoreUnits}',
+              ),
             ),
-            const Spacer(),
-            SizedBox(
-              width: 288,
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: CustomButton(
-                      onTap: onTap,
-                      text: isExpanded ? 'Скрыть' : 'О журнале',
-                      textColor: isExpanded ? AppColor.white : AppColor.dark,
-                      color: isExpanded ? AppColor.dark : AppColor.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: isExpanded
-                          ? null
-                          : Border.all(
-                              color: AppColor.lightGray,
-                              width: 1,
-                            ),
+            // const Spacer(),
+            Expanded(
+              flex: MediaQuery.of(context).size.width > 1500
+                  ? 5
+                  : MediaQuery.of(context).size.width > 1600
+                      ? 4
+                      : MediaQuery.of(context).size.width > 1700
+                          ? 3
+                          : 6,
+              child: SizedBox(
+                width: 288,
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: CustomButton(
+                        onTap: onTap,
+                        text: isExpanded ? 'Скрыть' : 'О журнале',
+                        textColor: isExpanded ? AppColor.white : AppColor.dark,
+                        color: isExpanded ? AppColor.dark : AppColor.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: isExpanded
+                            ? null
+                            : Border.all(
+                                color: AppColor.lightGray,
+                                width: 1,
+                              ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 3,
-                    child: CustomButton(
-                      text: 'Отправить статью',
-                      color: AppColor.cyan,
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () async {
-                        var url = 'http://t.me/publishpointbot';
-                        if (await canLaunchUrl(Uri.parse(url))) {
-                          await launchUrl(
-                            Uri.parse(url),
-                            mode: LaunchMode.externalApplication,
-                          );
-                        } else {
-                          throw "Could not launch $url";
-                        }
-                      },
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 3,
+                      child: CustomButton(
+                        text: 'Отправить статью',
+                        color: AppColor.cyan,
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () async {
+                          var url = 'http://t.me/publishpointbot';
+                          if (await canLaunchUrl(Uri.parse(url))) {
+                            await launchUrl(
+                              Uri.parse(url),
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } else {
+                            throw "Could not launch $url";
+                          }
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

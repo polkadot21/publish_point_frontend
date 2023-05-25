@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:publishpoint/src/constants/app_color.dart';
 import 'package:publishpoint/src/constants/responsivness.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class BottomColumnWidget extends StatelessWidget {
-  const BottomColumnWidget({Key? key}) : super(key: key);
+  final Function() onTap;
+
+  const BottomColumnWidget({
+    Key? key,
+    required this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,15 +34,7 @@ class BottomColumnWidget extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           InkWell(
-            onTap: () async {
-              var url = 'https://docs.google.com/document/d/'
-                  '1bunh3gwHiSpe92xaL3Yp8Dw6irn-6EzaWnHPAJ267zQ/edit';
-              if (await canLaunchUrl(Uri.parse(url))) {
-                await launchUrl(Uri.parse(url));
-              } else {
-                throw "Could not launch $url";
-              }
-            },
+            onTap: onTap,
             child: const Text(
               'Политика конфиденциальности',
               style: TextStyle(

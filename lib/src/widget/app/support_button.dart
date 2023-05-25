@@ -67,10 +67,15 @@ class SupportButton extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  SvgPicture.asset(
-                    'assets/icons/send.svg',
-                    width: 16,
-                    height: 16,
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: SvgPicture.asset(
+                        'assets/icons/send.svg',
+                        // width: 16,
+                        // height: 16,
+                      ),
+                    ),
                   ),
                 ],
               ),

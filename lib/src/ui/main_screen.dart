@@ -10,6 +10,8 @@ import 'package:publishpoint/src/dialog/bottom_dialog.dart';
 import 'package:publishpoint/src/model/api/journal_list_model.dart';
 import 'package:publishpoint/src/ui/about_project/about_project_screen.dart';
 import 'package:publishpoint/src/ui/cotacts/contacts_screen.dart';
+import 'package:publishpoint/src/ui/privacy_screen/privacy_screen.dart';
+import 'package:publishpoint/src/utils/utils.dart';
 import 'package:publishpoint/src/widget/app/custom_scroll_loading.dart';
 import 'package:publishpoint/src/widget/mobile/magazine_item_widget.dart';
 import 'package:publishpoint/src/widget/web/magazine/web_magazine_center_widget.dart';
@@ -35,7 +37,7 @@ class _MainScreenState extends State<MainScreen> {
       sortIndex = -1;
   final ScrollController _scrollController = ScrollController();
   final textController = TextEditingController();
-  bool isListOpen = true, isAboutMagazineOpen = false, onSearchActive = false;
+  bool isAboutMagazineOpen = false, onSearchActive = false;
   String selectedSort = '', sortType = 'asc';
   Timer? searchOnStoppedTyping;
 
@@ -106,121 +108,137 @@ class _MainScreenState extends State<MainScreen> {
             }
             loadInfoData = !state.data.next;
           }
-          return Scaffold(
-            backgroundColor: AppColor.bg,
-            appBar: AppBar(
-              titleSpacing: 0,
-              elevation: 0,
-              backgroundColor: AppColor.dark,
-              title: MainAppBar(
-                onMenuTap: (int val) {
-                  screenIndex = val;
-                  setState(() {});
-                },
-                controller: textController,
-                onSearchActive: onSearchActive,
-                onSearch: (bool active) {
-                  setState(() {
-                    onSearchActive = active;
-                  });
-                  if (!active) {
-                    search = null;
-                    if (currentIndex == 0) {
-                      _getMoreSportData();
-                    } else {
-                      _getMoreInfoData();
+          return GestureDetector(
+            onTap: () {
+              Utils.closeKeyboard(context);
+              onSearchActive = false;
+              setState(() {});
+            },
+            child: Scaffold(
+              backgroundColor: AppColor.bg,
+              appBar: AppBar(
+                titleSpacing: 0,
+                elevation: 0,
+                backgroundColor: AppColor.dark,
+                toolbarHeight: 72,
+                title: MainAppBar(
+                  onMenuTap: (int val) {
+                    screenIndex = val;
+                    setState(() {});
+                  },
+                  controller: textController,
+                  onSearchActive: onSearchActive,
+                  onSearch: (bool active) {
+                    setState(() {
+                      onSearchActive = active;
+                    });
+                    if (!active) {
+                      search = null;
+                      if (currentIndex == 0) {
+                        _getMoreSportData();
+                      } else {
+                        _getMoreInfoData();
+                      }
                     }
-                  }
-                },
-                onChanged: (String obj) {
-                  if (screenIndex == 0) {
-                    const duration = Duration(milliseconds: 1200);
-                    if (searchOnStoppedTyping != null) {
-                      searchOnStoppedTyping!.cancel();
+                  },
+                  onChanged: (String obj) {
+                    if (screenIndex == 0) {
+                      const duration = Duration(milliseconds: 1200);
+                      if (searchOnStoppedTyping != null) {
+                        searchOnStoppedTyping!.cancel();
+                      }
+                      searchOnStoppedTyping = Timer(
+                        duration,
+                        () {
+                          search = obj;
+                          if (currentIndex == 0) {
+                            sportPage = 1;
+                            loadSportData = false;
+                            _getMoreSportData();
+                          } else {
+                            infoPage = 1;
+                            loadInfoData = false;
+                            _getMoreInfoData();
+                          }
+                        },
+                      );
                     }
-                    searchOnStoppedTyping = Timer(
-                      duration,
-                      () {
-                        search = obj;
-                        if (currentIndex == 0) {
-                          sportPage = 1;
-                          loadSportData = false;
-                          _getMoreSportData();
-                        } else {
-                          infoPage = 1;
-                          loadInfoData = false;
-                          _getMoreInfoData();
-                        }
-                      },
-                    );
-                  }
-                },
+                  },
+                ),
               ),
-            ),
-            body: Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    controller: _scrollController,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal:
-                              ResponsiveWidget.marginHorizontal(context),
-                        ),
-                        child: screenIndex == 0
-                            ? WebMagazineCenterWidget(
-                                onTap: () {
-                                  isListOpen = !isListOpen;
-                                  setState(() {});
-                                },
-                              )
-                            : screenIndex == 1
-                                ? const AboutProjectScreen()
-                                : const ContactsScreen(),
-                      ),
-                      if (ResponsiveWidget.isSmallScreen(context) ||
-                          ResponsiveWidget.isMediumScreen(context))
-                        const SizedBox(height: 20),
-                      if (isListOpen && screenIndex == 0)
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(24),
-                            color: AppColor.white,
-                            border: Border.all(
-                              color: AppColor.lightGray,
-                              width: 1,
-                            ),
-                          ),
-                          margin: EdgeInsets.symmetric(
+              body: Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      controller: _scrollController,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
                             horizontal:
                                 ResponsiveWidget.marginHorizontal(context),
                           ),
-                          padding: const EdgeInsets.all(36),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              IntrinsicHeight(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColor.bg,
-                                    border: Border.all(
-                                      color: AppColor.divider,
-                                      width: 1,
+                          child: screenIndex == 0
+                              ? const WebMagazineCenterWidget()
+                              : screenIndex == 1
+                                  ? const AboutProjectScreen()
+                                  : screenIndex == 2
+                                      ? const ContactsScreen()
+                                      : const PrivacyScreen(),
+                        ),
+                        if (ResponsiveWidget.isSmallScreen(context) ||
+                            ResponsiveWidget.isMediumScreen(context))
+                          const SizedBox(height: 20),
+                        if (screenIndex == 0)
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(24),
+                              color: AppColor.white,
+                              border: Border.all(
+                                color: AppColor.lightGray,
+                                width: 1,
+                              ),
+                            ),
+                            margin: EdgeInsets.symmetric(
+                              horizontal:
+                                  ResponsiveWidget.marginHorizontal(context),
+                            ),
+                            padding: const EdgeInsets.all(36),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                IntrinsicHeight(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColor.bg,
+                                      border: Border.all(
+                                        color: AppColor.divider,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.all(2),
-                                  margin: const EdgeInsets.only(bottom: 16),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      ResponsiveWidget.isSmallScreen(context) ||
-                                              ResponsiveWidget.isMediumScreen(
-                                                  context)
-                                          ? Expanded(
-                                              child: ChangeableContainer(
+                                    padding: const EdgeInsets.all(2),
+                                    margin: const EdgeInsets.only(bottom: 16),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ResponsiveWidget.isSmallScreen(
+                                                    context) ||
+                                                ResponsiveWidget.isMediumScreen(
+                                                    context)
+                                            ? Expanded(
+                                                child: ChangeableContainer(
+                                                  isChosen: currentIndex == 0,
+                                                  text: 'Спортивная наука',
+                                                  onTap: () {
+                                                    currentIndex = 0;
+                                                    sportPage = 1;
+                                                    loadSportData = false;
+                                                    _getMoreSportData();
+                                                  },
+                                                ),
+                                              )
+                                            : ChangeableContainer(
                                                 isChosen: currentIndex == 0,
                                                 text: 'Спортивная наука',
                                                 onTap: () {
@@ -230,22 +248,23 @@ class _MainScreenState extends State<MainScreen> {
                                                   _getMoreSportData();
                                                 },
                                               ),
-                                            )
-                                          : ChangeableContainer(
-                                              isChosen: currentIndex == 0,
-                                              text: 'Спортивная наука',
-                                              onTap: () {
-                                                currentIndex = 0;
-                                                sportPage = 1;
-                                                loadSportData = false;
-                                                _getMoreSportData();
-                                              },
-                                            ),
-                                      ResponsiveWidget.isSmallScreen(context) ||
-                                              ResponsiveWidget.isMediumScreen(
-                                                  context)
-                                          ? Expanded(
-                                              child: ChangeableContainer(
+                                        ResponsiveWidget.isSmallScreen(
+                                                    context) ||
+                                                ResponsiveWidget.isMediumScreen(
+                                                    context)
+                                            ? Expanded(
+                                                child: ChangeableContainer(
+                                                  isChosen: currentIndex == 1,
+                                                  text: 'Информатика',
+                                                  onTap: () {
+                                                    currentIndex = 1;
+                                                    infoPage = 1;
+                                                    loadInfoData = false;
+                                                    _getMoreInfoData();
+                                                  },
+                                                ),
+                                              )
+                                            : ChangeableContainer(
                                                 isChosen: currentIndex == 1,
                                                 text: 'Информатика',
                                                 onTap: () {
@@ -255,255 +274,260 @@ class _MainScreenState extends State<MainScreen> {
                                                   _getMoreInfoData();
                                                 },
                                               ),
-                                            )
-                                          : ChangeableContainer(
-                                              isChosen: currentIndex == 1,
-                                              text: 'Информатика',
-                                              onTap: () {
-                                                currentIndex = 1;
-                                                infoPage = 1;
-                                                loadInfoData = false;
-                                                _getMoreInfoData();
-                                              },
-                                            ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              if (ResponsiveWidget.isMediumScreen(context) ||
-                                  ResponsiveWidget.isSmallScreen(context))
-                                InkWell(
-                                  onTap: () {
-                                    BottomDialog.showSortByDialog(
-                                      context,
-                                      selected: selectedSort,
-                                      onSelect: (String sort, int index) {
-                                        selectedSort = sort;
-                                        sortIndex = index;
-                                        priceSort = null;
-                                        nextDateSort = null;
-                                        nextDateDeadlineSort = null;
-                                        acceptSort = null;
-                                        generalSort = null;
-                                        if (index == 0) {
-                                          priceSort = 'asc';
-                                        } else if (index == 1) {
-                                          nextDateSort = 'asc';
-                                        } else if (index == 2) {
-                                          nextDateDeadlineSort = 'asc';
-                                        } else if (index == 3) {
-                                          acceptSort = 'asc';
-                                        } else if (index == 4) {
-                                          generalSort = 'asc';
-                                        }
-                                        if (currentIndex == 0) {
-                                          sportPage = 1;
-                                          loadSportData = false;
-                                          _getMoreSportData();
-                                        } else {
-                                          infoPage = 1;
-                                          loadInfoData = false;
-                                          _getMoreInfoData();
-                                        }
-                                      },
-                                    );
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: AppColor.lightGray,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
-                                    margin: const EdgeInsets.only(bottom: 24),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          selectedSort.isEmpty
-                                              ? 'Сортировать по'
-                                              : selectedSort,
-                                          style: const TextStyle(
-                                            color: AppColor.dark,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                            height: 18 / 14,
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        SvgPicture.asset(
-                                          'assets/icons/arrow_bottom.svg',
-                                        ),
                                       ],
                                     ),
                                   ),
                                 ),
-                              if (ResponsiveWidget.isMediumScreen(context) ||
-                                  ResponsiveWidget.isSmallScreen(context))
-                                ListView.separated(
-                                  // controller: _scrollController,
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    if (index ==
-                                        (currentIndex == 0
-                                            ? sportData.data.length
-                                            : infoData.data.length)) {
-                                      return CustomScrollLoading(
-                                        loading: currentIndex == 0
-                                            ? loadSportData
-                                            : loadInfoData,
+                                if (ResponsiveWidget.isMediumScreen(context) ||
+                                    ResponsiveWidget.isSmallScreen(context))
+                                  InkWell(
+                                    onTap: () {
+                                      BottomDialog.showSortByDialog(
+                                        context,
+                                        selected: selectedSort,
+                                        onSelect: (String sort, int index) {
+                                          selectedSort = sort;
+                                          sortIndex = index;
+                                          priceSort = null;
+                                          nextDateSort = null;
+                                          nextDateDeadlineSort = null;
+                                          acceptSort = null;
+                                          generalSort = null;
+                                          if (index == 0) {
+                                            priceSort = 'asc';
+                                          } else if (index == 1) {
+                                            nextDateSort = 'asc';
+                                          } else if (index == 2) {
+                                            nextDateDeadlineSort = 'asc';
+                                          } else if (index == 3) {
+                                            acceptSort = 'asc';
+                                          } else if (index == 4) {
+                                            generalSort = 'asc';
+                                          }
+                                          if (currentIndex == 0) {
+                                            sportPage = 1;
+                                            loadSportData = false;
+                                            _getMoreSportData();
+                                          } else {
+                                            infoPage = 1;
+                                            loadInfoData = false;
+                                            _getMoreInfoData();
+                                          }
+                                        },
                                       );
-                                    }
-                                    return MagazineItemWidget(
-                                      data: currentIndex == 0
-                                          ? sportData.data[index]
-                                          : infoData.data[index],
-                                      isExpanded: isAboutMagazineOpen,
-                                      onTap: () {
-                                        if (currentIndex == 0) {
-                                          sportIndex = index;
-                                        } else {
-                                          infoIndex = index;
-                                        }
-                                        setState(() {});
-                                      },
-                                    );
-                                  },
-                                  separatorBuilder: (_, __) {
-                                    return const Divider(height: 32);
-                                  },
-                                  itemCount: currentIndex == 0
-                                      ? sportData.data.length + 1
-                                      : infoData.data.length + 1,
-                                )
-                              else
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: SizedBox(
-                                    width: ResponsiveWidget.isCustomSize(
-                                            context)
-                                        ? 1366 -
-                                            (ResponsiveWidget.marginHorizontal(
-                                                      context,
-                                                    ) *
-                                                    2 +
-                                                86)
-                                        : MediaQuery.of(context).size.width -
-                                            (ResponsiveWidget.marginHorizontal(
-                                                      context,
-                                                    ) *
-                                                    2 +
-                                                74),
-                                    child: ListView.separated(
-                                      // controller: _scrollController,
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemBuilder: (context, index) {
-                                        if (index == 0) {
-                                          return WebTableHeaderWidget(
-                                            sortIndex: sortIndex,
-                                            sortType: sortType,
-                                            onSort: (
-                                              String sortTypeVal,
-                                              int index,
-                                              String sort,
-                                            ) {
-                                              selectedSort = sort;
-                                              sortIndex = index;
-                                              sortType = sortTypeVal;
-                                              priceSort = null;
-                                              nextDateSort = null;
-                                              nextDateDeadlineSort = null;
-                                              acceptSort = null;
-                                              generalSort = null;
-                                              if (index == 0) {
-                                                priceSort = sortType;
-                                              } else if (index == 1) {
-                                                nextDateSort = sortType;
-                                              } else if (index == 2) {
-                                                nextDateDeadlineSort = sortType;
-                                              } else if (index == 3) {
-                                                acceptSort = sortType;
-                                              } else if (index == 4) {
-                                                generalSort = sortType;
-                                              }
-                                              if (currentIndex == 0) {
-                                                sportPage = 1;
-                                                loadSportData = false;
-                                                _getMoreSportData();
-                                              } else {
-                                                infoPage = 1;
-                                                loadInfoData = false;
-                                                _getMoreInfoData();
-                                              }
-                                            },
-                                          );
-                                        }
-                                        if (index ==
-                                            (currentIndex == 0
-                                                ? sportData.data.length + 1
-                                                : infoData.data.length + 1)) {
-                                          return CustomScrollLoading(
-                                            loading: currentIndex == 0
-                                                ? loadSportData
-                                                : loadInfoData,
-                                          );
-                                        }
-                                        return WebTableRowWidget(
-                                          data: currentIndex == 0
-                                              ? sportData.data[index - 1]
-                                              : infoData.data[index - 1],
-                                          isExpanded: currentIndex == 0
-                                              ? sportIndex == index
-                                              : infoIndex == index,
-                                          onTap: () {
-                                            if (currentIndex == 0) {
-                                              if (sportIndex == index) {
-                                                sportIndex = -1;
-                                              } else {
-                                                sportIndex = index;
-                                              }
-                                            } else {
-                                              if (infoIndex == index) {
-                                                infoIndex = -1;
-                                              } else {
-                                                infoIndex = index;
-                                              }
-                                            }
-                                            setState(() {});
-                                          },
-                                        );
-                                      },
-                                      separatorBuilder: (_, __) {
-                                        return const Divider(height: 32);
-                                      },
-                                      itemCount: currentIndex == 0
-                                          ? sportData.data.length + 2
-                                          : infoData.data.length + 2,
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: AppColor.lightGray,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 12,
+                                      ),
+                                      margin: const EdgeInsets.only(bottom: 24),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            selectedSort.isEmpty
+                                                ? 'Сортировать по'
+                                                : selectedSort,
+                                            style: const TextStyle(
+                                              color: AppColor.dark,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 14,
+                                              height: 18 / 14,
+                                            ),
+                                          ),
+                                          const Spacer(),
+                                          SvgPicture.asset(
+                                            'assets/icons/arrow_bottom.svg',
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                            ],
+                                if (ResponsiveWidget.isMediumScreen(context) ||
+                                    ResponsiveWidget.isSmallScreen(context))
+                                  ListView.separated(
+                                    // controller: _scrollController,
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      if (index ==
+                                          (currentIndex == 0
+                                              ? sportData.data.length
+                                              : infoData.data.length)) {
+                                        return CustomScrollLoading(
+                                          loading: currentIndex == 0
+                                              ? loadSportData
+                                              : loadInfoData,
+                                        );
+                                      }
+                                      return MagazineItemWidget(
+                                        data: currentIndex == 0
+                                            ? sportData.data[index]
+                                            : infoData.data[index],
+                                        isExpanded: isAboutMagazineOpen,
+                                        onTap: () {
+                                          if (currentIndex == 0) {
+                                            sportIndex = index;
+                                          } else {
+                                            infoIndex = index;
+                                          }
+                                          setState(() {});
+                                        },
+                                      );
+                                    },
+                                    separatorBuilder: (_, __) {
+                                      return const Divider(height: 32);
+                                    },
+                                    itemCount: currentIndex == 0
+                                        ? sportData.data.length + 1
+                                        : infoData.data.length + 1,
+                                  )
+                                else
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: SizedBox(
+                                      width:
+                                          ResponsiveWidget.isCustomSize(context)
+                                              ? 1366 -
+                                                  (ResponsiveWidget
+                                                              .marginHorizontal(
+                                                            context,
+                                                          ) *
+                                                          2 +
+                                                      86)
+                                              : MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  (ResponsiveWidget
+                                                              .marginHorizontal(
+                                                            context,
+                                                          ) *
+                                                          2 +
+                                                      74),
+                                      child: ListView.separated(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          if (index == 0) {
+                                            return WebTableHeaderWidget(
+                                              sortIndex: sortIndex,
+                                              sortType: sortType,
+                                              onSort: (
+                                                String sortTypeVal,
+                                                int index,
+                                                String sort,
+                                              ) {
+                                                selectedSort = sort;
+                                                sortIndex = index;
+                                                sortType = sortTypeVal;
+                                                priceSort = null;
+                                                nextDateSort = null;
+                                                nextDateDeadlineSort = null;
+                                                acceptSort = null;
+                                                generalSort = null;
+                                                if (index == 0) {
+                                                  priceSort = sortType;
+                                                } else if (index == 1) {
+                                                  nextDateSort = sortType;
+                                                } else if (index == 2) {
+                                                  nextDateDeadlineSort =
+                                                      sortType;
+                                                } else if (index == 3) {
+                                                  acceptSort = sortType;
+                                                } else if (index == 4) {
+                                                  generalSort = sortType;
+                                                }
+                                                if (currentIndex == 0) {
+                                                  sportPage = 1;
+                                                  loadSportData = false;
+                                                  _getMoreSportData();
+                                                } else {
+                                                  infoPage = 1;
+                                                  loadInfoData = false;
+                                                  _getMoreInfoData();
+                                                }
+                                              },
+                                            );
+                                          }
+                                          if (index ==
+                                              (currentIndex == 0
+                                                  ? sportData.data.length + 1
+                                                  : infoData.data.length + 1)) {
+                                            return CustomScrollLoading(
+                                              loading: currentIndex == 0
+                                                  ? loadSportData
+                                                  : loadInfoData,
+                                            );
+                                          }
+                                          return WebTableRowWidget(
+                                            data: currentIndex == 0
+                                                ? sportData.data[index - 1]
+                                                : infoData.data[index - 1],
+                                            isExpanded: currentIndex == 0
+                                                ? sportIndex == index
+                                                : infoIndex == index,
+                                            onTap: () {
+                                              if (currentIndex == 0) {
+                                                if (sportIndex == index) {
+                                                  sportIndex = -1;
+                                                } else {
+                                                  sportIndex = index;
+                                                }
+                                              } else {
+                                                if (infoIndex == index) {
+                                                  infoIndex = -1;
+                                                } else {
+                                                  infoIndex = index;
+                                                }
+                                              }
+                                              setState(() {});
+                                            },
+                                          );
+                                        },
+                                        separatorBuilder: (_, __) {
+                                          return const Divider(height: 32);
+                                        },
+                                        itemCount: currentIndex == 0
+                                            ? sportData.data.length + 2
+                                            : infoData.data.length + 2,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
-                      const SizedBox(height: 72),
-                      if (ResponsiveWidget.isSmallScreen(context) ||
-                          ResponsiveWidget.isMediumScreen(context))
-                        const BottomColumnWidget(),
-                    ],
+                        const SizedBox(height: 72),
+                        if (ResponsiveWidget.isSmallScreen(context) ||
+                            ResponsiveWidget.isMediumScreen(context))
+                          BottomColumnWidget(
+                            onTap: () {
+                              screenIndex = 3;
+                              setState(() {});
+                            },
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-                if (ResponsiveWidget.isLargeScreen(context) ||
-                    ResponsiveWidget.isCustomSize(context))
-                  const BottomRowWidget(),
-              ],
+                  if (ResponsiveWidget.isLargeScreen(context) ||
+                      ResponsiveWidget.isCustomSize(context))
+                    BottomRowWidget(
+                      onTap: () {
+                        screenIndex = 3;
+                        setState(() {});
+                      },
+                    ),
+                ],
+              ),
             ),
           );
         },
