@@ -23,7 +23,7 @@ class PrivacyScreen extends StatelessWidget {
               minHeight: ResponsiveWidget.isSmallScreen(context)
                   ? 360
                   : width < 1600
-                      ? 480
+                      ? 360
                       : 518,
             ),
             child: Stack(
@@ -70,15 +70,15 @@ class PrivacyScreen extends StatelessWidget {
                     ResponsiveWidget.isCustomSize(context))
                   Positioned(
                     width: ResponsiveWidget.isCustomSize(context)
-                        ? 580
+                        ? 600
                         : width < 1600
-                            ? 720
+                            ? 600
                             : 800,
                     right: -16,
                     height: ResponsiveWidget.isCustomSize(context)
                         ? 360
                         : width < 1600
-                            ? 480
+                            ? 360
                             : 518,
                     child: Padding(
                       padding: EdgeInsets.only(

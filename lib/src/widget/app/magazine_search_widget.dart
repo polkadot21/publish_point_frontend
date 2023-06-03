@@ -31,7 +31,7 @@ class MagazineSearchWidget extends StatelessWidget {
         ),
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(
-            vertical: 8,
+            vertical: 0,
           ),
           filled: true,
           fillColor: AppColor.white,
@@ -62,10 +62,14 @@ class MagazineSearchWidget extends StatelessWidget {
           ),
           suffixIcon: GestureDetector(
             onTap: onDropDownTap,
-            child: SvgPicture.asset(
-              'assets/icons/arrow_bottom.svg',
-              color: AppColor.gray,
-              fit: BoxFit.none,
+            child: Container(
+              color: Colors.transparent,
+              height: 40,
+              child: SvgPicture.asset(
+                'assets/icons/arrow_bottom.svg',
+                color: AppColor.gray,
+                fit: BoxFit.none,
+              ),
             ),
           ),
         ),

@@ -90,16 +90,18 @@ class AboutProjectScreen extends StatelessWidget {
                     ResponsiveWidget.isCustomSize(context))
                   Positioned(
                     width: ResponsiveWidget.isCustomSize(context)
-                        ? 580
+                        ? 600
                         : width < 1600
-                            ? 720
+                            ? 600
                             : 800,
                     right: -16,
                     height: ResponsiveWidget.isCustomSize(context)
                         ? 360
                         : width < 1600
-                            ? 480
+                            ? 360
                             : 518,
+                    // top: ResponsiveWidget.isLargeScreen(context) ? 0 : null,
+                    top: 0,
                     child: Padding(
                       padding: EdgeInsets.only(
                         right: ResponsiveWidget.isLargeScreen(context)

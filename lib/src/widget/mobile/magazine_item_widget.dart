@@ -204,7 +204,7 @@ class MagazineItemWidget extends StatelessWidget {
                 color: AppColor.cyan,
                 borderRadius: BorderRadius.circular(8),
                 onTap: () async {
-                  var url = 'http://t.me/publishpointbot';
+                  var url = 'https://t.me/publishpoint';
                   if (await canLaunchUrl(Uri.parse(url))) {
                     await launchUrl(
                       Uri.parse(url),
