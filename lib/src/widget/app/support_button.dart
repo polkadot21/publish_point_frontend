@@ -30,7 +30,7 @@ class SupportButton extends StatelessWidget {
         borderRadius: borderRadius ?? BorderRadius.circular(8),
         child: InkWell(
           onTap: () async {
-            var url = 'http://t.me/publishpointbot';
+            var url = 'https://t.me/publishpoint';
             if (await canLaunchUrl(Uri.parse(url))) {
               await launchUrl(
                 Uri.parse(url),
