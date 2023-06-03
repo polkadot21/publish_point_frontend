@@ -98,10 +98,10 @@ class ContactsScreen extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.only(
                         right: ResponsiveWidget.isLargeScreen(context)
-                            ? 140
+                            ? 40
                             : ResponsiveWidget.isCustomSize(context)
-                                ? 112
-                                : ResponsiveWidget.isCustomSize(context)
+                                ? 80
+                                : ResponsiveWidget.isMediumScreen(context)
                                     ? 40
                                     : 20,
                       ),
