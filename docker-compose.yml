@@ -8,4 +8,4 @@ services:
     working_dir: /app
     tty: true
     ports:
-      - 8057:80
+      - 80:80
