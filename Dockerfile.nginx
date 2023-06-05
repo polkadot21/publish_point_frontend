@@ -1,0 +1,7 @@
+FROM nginx:1.21.1-alpine
+# Copy custom nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy Flutter build and SSL certs
+COPY --from=build-env /app/build/web /usr/share/nginx/html
+COPY ./certs/fullchain.pem /etc/letsencrypt/live/seaofwisdom.xyz/fullchain.pem
+COPY ./certs/privkey.pem /etc/letsencrypt/live/seaofwisdom.xyz/privkey.pem
