@@ -9,7 +9,6 @@ services:
     tty: true
     volumes:
       - ./app:/app
-      - ./certs:/etc/letsencrypt/live/publishpoint.org
 
   nginx:
     build:
@@ -20,5 +19,4 @@ services:
       - 443:443
     volumes:
       - ./web:/usr/share/nginx/html
-      - ./certs:/etc/letsencrypt/live/publishpoint.org
 
