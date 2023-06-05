@@ -1,4 +1,8 @@
 version: "3.7"
+
+volumes:
+  appdata:
+
 services:
   frontend:
     build:
@@ -9,6 +13,7 @@ services:
     tty: true
     volumes:
       - ./app:/app
+      - appdata:/app/build/web
 
   nginx:
     build:
@@ -18,5 +23,6 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./web:/usr/share/nginx/html
+      - appdata:/usr/share/nginx/html
+
 
