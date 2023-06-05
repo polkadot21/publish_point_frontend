@@ -50,13 +50,19 @@ class WebMagazineCenterWidget extends StatelessWidget {
                     if (ResponsiveWidget.isSmallScreen(context) ||
                         ResponsiveWidget.isMediumScreen(context))
                       const SizedBox(height: 80),
-                    const Text(
+                    Text(
                       'Точка отправления в мир научных публикаций',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        fontSize: 48,
+                        fontSize: ResponsiveWidget.isSmallScreen(context) ||
+                                ResponsiveWidget.isMediumScreen(context)
+                            ? 32
+                            : 48,
                         color: AppColor.dark,
-                        height: 58 / (48),
+                        height: ResponsiveWidget.isSmallScreen(context) ||
+                                ResponsiveWidget.isMediumScreen(context)
+                            ? 38 / 32
+                            : 58 / 48,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -79,14 +85,14 @@ class WebMagazineCenterWidget extends StatelessWidget {
                   width: ResponsiveWidget.isCustomSize(context)
                       ? 600
                       : width < 1600
-                      ? 600
-                      : 800,
+                          ? 600
+                          : 800,
                   right: -16,
                   height: ResponsiveWidget.isCustomSize(context)
                       ? 360
                       : width < 1600
-                      ? 360
-                      : 518,
+                          ? 360
+                          : 518,
                   child: Padding(
                     padding: EdgeInsets.only(
                       right: ResponsiveWidget.isLargeScreen(context)

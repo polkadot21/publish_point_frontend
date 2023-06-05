@@ -51,13 +51,19 @@ class AboutProjectScreen extends StatelessWidget {
                               'assets/images/logo_image2.png',
                             ),
                           ),
-                        const Text(
+                         Text(
                           'О проекте',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
-                            fontSize: 48,
+                            fontSize: ResponsiveWidget.isSmallScreen(context) ||
+                                    ResponsiveWidget.isMediumScreen(context)
+                                ? 32
+                                : 48,
                             color: AppColor.dark,
-                            height: 58 / (48),
+                            height: ResponsiveWidget.isSmallScreen(context) ||
+                                    ResponsiveWidget.isMediumScreen(context)
+                                ? 38 / 32
+                                : 58 / 48,
                           ),
                         ),
                         const SizedBox(height: 16),

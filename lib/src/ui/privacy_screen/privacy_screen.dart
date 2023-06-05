@@ -53,13 +53,19 @@ class PrivacyScreen extends StatelessWidget {
                               'assets/images/logo_image2.png',
                             ),
                           ),
-                        const Text(
+                        Text(
                           'Политика в отношении обработки персональных данных',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
-                            fontSize: 48,
+                            fontSize: ResponsiveWidget.isSmallScreen(context) ||
+                                    ResponsiveWidget.isMediumScreen(context)
+                                ? 32
+                                : 48,
                             color: AppColor.dark,
-                            height: 58 / (48),
+                            height: ResponsiveWidget.isSmallScreen(context) ||
+                                    ResponsiveWidget.isMediumScreen(context)
+                                ? 38 / 32
+                                : 58 / 48,
                           ),
                         ),
                       ],
@@ -115,9 +121,9 @@ class PrivacyScreen extends StatelessWidget {
             ),
           ),
           padding: const EdgeInsets.all(32),
-          child: Column(
+          child: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 'Общие положения',
                 style: TextStyle(
