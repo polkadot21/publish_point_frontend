@@ -20,4 +20,13 @@ WORKDIR /app/
 RUN flutter build web
 # Stage 2 - Create the run-time image
 FROM nginx:1.21.1-alpine
+# Copy nginx.conf to the container
+COPY nginx.conf /etc/nginx/nginx.conf
+
 COPY --from=build-env /app/build/web /usr/share/nginx/html
+
+# Expose ports
+EXPOSE 80
+
+# Start Nginx server
+CMD ["nginx", "-g", "daemon off;"]
