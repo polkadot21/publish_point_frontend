@@ -15,7 +15,7 @@ RUN flutter channel master
 RUN flutter upgrade
 # Copy files to container and build
 RUN mkdir /app/
-COPY . /app/
+COPY ./publish_point_frontend /app/
 WORKDIR /app/
 RUN flutter build web
 # Stage 2 - Create the run-time image
