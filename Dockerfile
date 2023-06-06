@@ -15,9 +15,20 @@ RUN flutter channel master
 RUN flutter upgrade
 # Copy files to container and build
 RUN mkdir /app/
-COPY ./publish_point_frontend /app/
+COPY ./publish_point_frontend/pp_frontend /app/
 WORKDIR /app/
 RUN flutter build web
 # Stage 2 - Create the run-time image
 FROM nginx:1.21.1-alpine
+
+# Copy nginx.conf to the container
+COPY ./publish_point_frontend/pp_frontend/nginx.conf /etc/nginx/nginx.conf
+
 COPY --from=build-env /app/build/web /usr/share/nginx/html
+
+# Expose ports
+EXPOSE 80
+EXPOSE 443
+
+# Start Nginx server
+CMD ["nginx", "-g", "daemon off;"]
