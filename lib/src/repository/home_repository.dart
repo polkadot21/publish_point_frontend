@@ -3,7 +3,7 @@ import 'package:publishpoint/src/provider/home/home_provider.dart';
 
 abstract class RepositoryHome {
   Future<HttpResult> getJournals(
-    bool isSport,
+    Category category,
     int page,
     int perPage,
     String? sortByPrice,
@@ -20,7 +20,7 @@ class HomeRepository implements RepositoryHome {
 
   @override
   Future<HttpResult> getJournals(
-    bool isSport,
+    Category category,
     int page,
     int perPage,
     String? sortByPrice,
@@ -31,7 +31,7 @@ class HomeRepository implements RepositoryHome {
     String? search,
   ) {
     return homeProvider.getJournals(
-      isSport,
+      category,
       page,
       perPage,
       sortByPrice,

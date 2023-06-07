@@ -13,12 +13,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final RepositoryHome repository;
 
   HomeBloc({required this.repository}) : super(UnAuthenticated()) {
-    /// sport journals
-    on<AllSportJournalsEvent>((event, emit) async {
-      emit(LoadingSportJournalsState());
+
+    on<AllJournalsEvent>((event, emit) async {
+      emit(LoadingJournalsState());
 
       HttpResult response = await repository.getJournals(
-        true,
+        event.category,
         event.page,
         event.perPage,
         event.sortByPrice,
@@ -32,40 +32,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         JournalListModel data = JournalListModel.fromJson(
           response.result,
         );
-        emit(SuccessSportJournalsState(data, event.page));
+        emit(SuccessJournalsState(data, event.page));
       } else if (response.status == -1) {
-        emit(ErrorSportJournalsState('Utils.errorMessage(response)'));
+        emit(ErrorJournalsState('Internet error'));
       } else {
-        emit(ErrorSportJournalsState('Utils.errorMessage(response)'));
-      }
-    });
-
-    /// info journals
-
-    on<AllInfoJournalsEvent>((event, emit) async {
-      emit(LoadingInfoJournalsState());
-
-      HttpResult response = await repository.getJournals(
-        false,
-        event.page,
-        event.perPage,
-        event.sortByPrice,
-        event.sortByNextIssueDate,
-        event.sortByNextIssueDeadline,
-        event.sortByAccept,
-        event.sortByGeneral,
-        event.search,
-      );
-      if (response.isSuccess) {
-        JournalListModel data = JournalListModel.fromJson(
-          response.result,
-        );
-        emit(SuccessInfoJournalsState(data, event.page));
-      } else if (response.status == -1) {
-        emit(ErrorInfoJournalsState('Internet error'));
-      } else {
-        emit(ErrorInfoJournalsState('Socket error'));
+        emit(ErrorJournalsState('Socket error'));
       }
     });
   }
 }
+

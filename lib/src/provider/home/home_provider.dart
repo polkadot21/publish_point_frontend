@@ -1,11 +1,13 @@
 import 'package:publishpoint/src/model/http_result.dart';
 import 'package:publishpoint/src/provider/api_provider.dart';
 
-class HomeProvider extends ApiProvider {
-  /// get journals
+enum Category { sportScience, computerScience, psychology }
 
+class HomeProvider extends ApiProvider {
+
+  /// get journals
   Future<HttpResult> getJournals(
-    bool isSport,
+    Category category,
     int page,
     int perPage,
     String? sortByPrice,
@@ -32,11 +34,26 @@ class HomeProvider extends ApiProvider {
     } else if (search != null) {
       params += '&search=$search';
     }
+
     params = mainParam + params;
-    String url = "${baseUrl}/journals/"
-        "${isSport ? 'sport-science' : 'computer-science'}"
-        "?$params";
+
+    String url = "${baseUrl}/journals/${categoryToString(category)}?$params";
 
     return get(url);
   }
+
+  // Map Category enum to string
+  String categoryToString(Category category) {
+    switch(category) {
+      case Category.sportScience:
+        return 'sport-science';
+      case Category.computerScience:
+        return 'computer-science';
+      case Category.psychology:
+        return 'psychology';
+      default:
+        throw ArgumentError('Invalid Category');
+    }
+  }
 }
+
