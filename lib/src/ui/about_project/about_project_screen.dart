@@ -158,7 +158,7 @@ class AboutProjectScreen extends StatelessWidget {
                 TextSpan(
                   children: [
                     const TextSpan(
-                      text: 'Мы - команда ',
+                      text: 'За ',
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
