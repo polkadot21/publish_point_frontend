@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:publishpoint/src/model/http_result.dart';
 
 class ApiProvider {
-  String baseUrl = "http://65.109.233.251:8080/";
+  String baseUrl = "https://publishpoint.org/api";
   Duration durationTimeout = const Duration(seconds: 30);
 
   Future<HttpResult> post(String url, dynamic body) async {
