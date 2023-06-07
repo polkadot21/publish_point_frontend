@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:publishpoint/src/bloc/home_bloc/home_bloc.dart';
 import 'package:publishpoint/src/constants/app_color.dart';
 import 'package:publishpoint/src/repository/home_repository.dart';
@@ -15,6 +16,7 @@ Future<void> main() async {
     ],
   );
   runApp(const MyApp());
+  setUrlStrategy(PathUrlStrategy());
 }
 
 class MyApp extends StatelessWidget {
