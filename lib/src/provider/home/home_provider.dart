@@ -33,7 +33,7 @@ class HomeProvider extends ApiProvider {
       params += '&search=$search';
     }
     params = mainParam + params;
-    String url = "${baseUrl}journals/"
+    String url = "${baseUrl}/journals/"
         "${isSport ? 'sport-science' : 'computer-science'}"
         "?$params";
 
