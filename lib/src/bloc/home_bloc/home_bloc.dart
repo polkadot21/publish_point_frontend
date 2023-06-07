@@ -18,7 +18,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(LoadingSportJournalsState());
 
       HttpResult response = await repository.getJournals(
-        true,
+        event.category,
         event.page,
         event.perPage,
         event.sortByPrice,
@@ -46,7 +46,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(LoadingInfoJournalsState());
 
       HttpResult response = await repository.getJournals(
-        false,
+        event.category,
         event.page,
         event.perPage,
         event.sortByPrice,
