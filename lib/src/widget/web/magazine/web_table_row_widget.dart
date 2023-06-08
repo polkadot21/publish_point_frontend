@@ -115,7 +115,7 @@ class WebTableRowWidget extends StatelessWidget {
                         color: AppColor.cyan,
                         borderRadius: BorderRadius.circular(8),
                         onTap: () async {
-                          var url = 'https://t.me/publishpoint';
+                          var url = data.submitPaperLink;
                           if (await canLaunchUrl(Uri.parse(url))) {
                             await launchUrl(
                               Uri.parse(url),
