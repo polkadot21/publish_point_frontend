@@ -49,7 +49,7 @@ class MagazineItemWidget extends StatelessWidget {
             const SizedBox(width: 12),
             const Spacer(),
             Text(
-              '\$${data.pricePerPaper}',
+              text: '₽${data.pricePerPaper}',
               style: const TextStyle(
                 fontSize: 15,
                 color: AppColor.dark,
