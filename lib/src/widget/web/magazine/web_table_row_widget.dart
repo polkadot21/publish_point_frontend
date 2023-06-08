@@ -39,7 +39,7 @@ class WebTableRowWidget extends StatelessWidget {
               flex: 2,
               child: WebTableTextWidget(
                 width: 104,
-                text: '\$${data.pricePerPage}',
+                text: '₽${data.pricePerPaper}',
               ),
             ),
             // const Spacer(),
