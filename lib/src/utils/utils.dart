@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:publishpoint/src/model/api/category_enum.dart';
 
 class Utils {
   static void closeKeyboard(BuildContext context) {
@@ -48,5 +49,16 @@ class Utils {
 
   static String numberFormat(int number) {
     return number > 9 ? number.toString() : "0$number";
+  }
+
+  static String category(CategoryEnum category) {
+    switch (category) {
+      case CategoryEnum.computerScience:
+        return 'computer-science';
+      case CategoryEnum.psychology:
+        return 'psychology';
+      default:
+        throw ArgumentError('Invalid Category');
+    }
   }
 }

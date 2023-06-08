@@ -6,59 +6,26 @@ abstract class HomeEvent extends Equatable {
 }
 
 /// sport journals
-class AllSportJournalsEvent extends HomeEvent {
+class AllJournalsEvent extends HomeEvent {
+  final CategoryEnum specEnum;
   final int page;
-  final int perPage;
-  final String? sortByPrice;
-  final String? sortByNextIssueDate;
-  final String? sortByNextIssueDeadline;
-  final String? sortByAccept;
-  final String? sortByGeneral;
+  final int sortIndex;
+  final String sortType;
   final String? search;
 
-  AllSportJournalsEvent(
+  AllJournalsEvent(
+    this.specEnum,
     this.page,
-    this.perPage,
-    this.sortByPrice,
-    this.sortByNextIssueDate,
-    this.sortByNextIssueDeadline,
-    this.sortByAccept,
-    this.sortByGeneral,
+    this.sortIndex,
+    this.sortType,
     this.search,
   );
 
   @override
   List<Object> get props => [
+        specEnum,
         page,
-        perPage,
-      ];
-}
-
-/// info journals
-class AllInfoJournalsEvent extends HomeEvent {
-  final int page;
-  final int perPage;
-  final String? sortByPrice;
-  final String? sortByNextIssueDate;
-  final String? sortByNextIssueDeadline;
-  final String? sortByAccept;
-  final String? sortByGeneral;
-  final String? search;
-
-  AllInfoJournalsEvent(
-    this.page,
-    this.perPage,
-    this.sortByPrice,
-    this.sortByNextIssueDate,
-    this.sortByNextIssueDeadline,
-    this.sortByAccept,
-    this.sortByGeneral,
-    this.search,
-  );
-
-  @override
-  List<Object> get props => [
-        page,
-        perPage,
+        sortIndex,
+        sortType,
       ];
 }

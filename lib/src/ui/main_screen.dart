@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:publishpoint/src/bloc/home_bloc/home_bloc.dart';
 import 'package:publishpoint/src/constants/app_color.dart';
+import 'package:publishpoint/src/constants/app_data.dart';
 import 'package:publishpoint/src/constants/responsivness.dart';
 import 'package:publishpoint/src/dialog/ui/show_search_result_dialog.dart';
+import 'package:publishpoint/src/model/api/category_enum.dart';
 import 'package:publishpoint/src/model/api/journal_list_model.dart';
 import 'package:publishpoint/src/model/api/spec_model.dart';
 import 'package:publishpoint/src/ui/about_project/about_project_screen.dart';
@@ -31,7 +33,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int sportIndex = -1, infoIndex = -1, screenIndex = 0, sortIndex = -1;
+  int journalIndex = -1, screenIndex = 0, sortIndex = -1;
   final ScrollController _scrollController = ScrollController();
   final textController = TextEditingController();
   final dropDownController = TextEditingController();
@@ -39,44 +41,27 @@ class _MainScreenState extends State<MainScreen> {
   String selectedSort = '', sortType = 'asc';
   Timer? searchOnStoppedTyping;
 
-  int sportPage = 1, infoPage = 1, perPage = 10, specIndex = 0;
-  bool addSportData = true,
-      addInfoData = true,
-      loadSportData = false,
-      loadInfoData = false;
+  int page = 1, specIndex = 0;
+  bool addData = true, loadData = false;
+  CategoryEnum categoryEnum = CategoryEnum.psychology;
 
-  String? priceSort,
-      nextDateSort,
-      nextDateDeadlineSort,
-      acceptSort,
-      generalSort,
-      search;
+  String? search;
 
-  JournalListModel sportData = JournalListModel.fromJson({});
-  JournalListModel infoData = JournalListModel.fromJson({});
+  JournalListModel data = JournalListModel.fromJson({});
 
-  /// added spec data
-  /// lib/model/api/spec_model.dart
   List<SpecData> newSpecData = [];
-  List<SpecData> specData = AppColor.specData;
+  List<SpecData> specData = AppData.specData;
 
-  /// to show spec search dialog
   bool showCenterDialog = false;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _getMoreSportData();
-    });
+    _getMoreData();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
               _scrollController.position.maxScrollExtent &&
           screenIndex == 0) {
-        if (specIndex == 0) {
-          _getMoreSportData();
-        } else {
-          _getMoreInfoData();
-        }
+        _getMoreData();
       }
     });
     newSpecData = specData;
@@ -105,24 +90,15 @@ class _MainScreenState extends State<MainScreen> {
       listener: (context, state) {},
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
-          if (state is SuccessSportJournalsState) {
-            if (addSportData) {
+          if (state is SuccessJournalsState) {
+            if (addData) {
               if (state.page == 1) {
-                sportData = state.data;
+                data = state.data;
               } else {
-                sportData.data.addAll(state.data.data);
+                data.data.addAll(state.data.data);
               }
             }
-            loadSportData = !state.data.next;
-          } else if (state is SuccessInfoJournalsState) {
-            if (addSportData) {
-              if (state.page == 1) {
-                infoData = state.data;
-              } else {
-                infoData.data.addAll(state.data.data);
-              }
-            }
-            loadInfoData = !state.data.next;
+            loadData = !state.data.next;
           }
           return GestureDetector(
             onTap: () {
@@ -151,40 +127,12 @@ class _MainScreenState extends State<MainScreen> {
                     });
                     if (!active) {
                       search = null;
-                      if (specIndex == 0) {
-                        sportPage = 1;
-                        loadSportData = false;
-                        _getMoreSportData();
-                      } else {
-                        infoPage = 1;
-                        loadInfoData = false;
-                        _getMoreInfoData();
-                      }
+                      page = 1;
+                      loadData = false;
+                      _getMoreData();
                     }
                   },
-                  onChanged: (String obj) {
-                    if (screenIndex == 0) {
-                      const duration = Duration(milliseconds: 1200);
-                      if (searchOnStoppedTyping != null) {
-                        searchOnStoppedTyping!.cancel();
-                      }
-                      searchOnStoppedTyping = Timer(
-                        duration,
-                        () {
-                          search = obj;
-                          if (specIndex == 0) {
-                            sportPage = 1;
-                            loadSportData = false;
-                            _getMoreSportData();
-                          } else {
-                            infoPage = 1;
-                            loadInfoData = false;
-                            _getMoreInfoData();
-                          }
-                        },
-                      );
-                    }
-                  },
+                  onChanged: _onChange,
                 ),
               ),
               body: Column(
@@ -230,8 +178,6 @@ class _MainScreenState extends State<MainScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    /// added magazine search widget
-                                    /// control widget removed
                                     MagazineSearchWidget(
                                       controller: dropDownController,
                                       onChanged: (obj) {
@@ -253,8 +199,6 @@ class _MainScreenState extends State<MainScreen> {
                                     if (ResponsiveWidget.isMediumScreen(
                                             context) ||
                                         ResponsiveWidget.isSmallScreen(context))
-
-                                      /// sort by mobile optimised
                                       SortByMobileWidget(
                                         onSelect: (String sort, int index) {
                                           onMobileSort(sort, index);
@@ -269,26 +213,16 @@ class _MainScreenState extends State<MainScreen> {
                                         physics:
                                             const NeverScrollableScrollPhysics(),
                                         itemBuilder: (context, index) {
-                                          if (specIndex == 0
-                                              ? index == sportData.data.length
-                                              : index == infoData.data.length) {
+                                          if (index == data.data.length) {
                                             return CustomScrollLoading(
-                                              loading: specIndex == 0
-                                                  ? loadSportData
-                                                  : loadInfoData,
+                                              loading: loadData,
                                             );
                                           }
                                           return MagazineItemWidget(
-                                            data: specIndex == 0
-                                                ? sportData.data[index]
-                                                : infoData.data[index],
+                                            data: data.data[index],
                                             isExpanded: isAboutMagazineOpen,
                                             onTap: () {
-                                              if (specIndex == 0) {
-                                                sportIndex = index;
-                                              } else {
-                                                infoIndex = index;
-                                              }
+                                              journalIndex = index;
                                               setState(() {});
                                             },
                                           );
@@ -296,9 +230,7 @@ class _MainScreenState extends State<MainScreen> {
                                         separatorBuilder: (_, __) {
                                           return const Divider(height: 32);
                                         },
-                                        itemCount: specIndex == 0
-                                            ? sportData.data.length + 1
-                                            : infoData.data.length + 1,
+                                        itemCount: data.data.length + 1,
                                       )
                                     else
                                       SingleChildScrollView(
@@ -322,67 +254,27 @@ class _MainScreenState extends State<MainScreen> {
                                                     selectedSort = sort;
                                                     sortIndex = index;
                                                     sortType = sortTypeVal;
-                                                    priceSort = null;
-                                                    nextDateSort = null;
-                                                    nextDateDeadlineSort = null;
-                                                    acceptSort = null;
-                                                    generalSort = null;
-                                                    if (index == 0) {
-                                                      priceSort = sortType;
-                                                    } else if (index == 1) {
-                                                      nextDateSort = sortType;
-                                                    } else if (index == 2) {
-                                                      nextDateDeadlineSort =
-                                                          sortType;
-                                                    } else if (index == 3) {
-                                                      acceptSort = sortType;
-                                                    } else if (index == 4) {
-                                                      generalSort = sortType;
-                                                    }
-                                                    if (specIndex == 0) {
-                                                      sportPage = 1;
-                                                      loadSportData = false;
-                                                      _getMoreSportData();
-                                                    } else {
-                                                      infoPage = 1;
-                                                      loadInfoData = false;
-                                                      _getMoreInfoData();
-                                                    }
+                                                    page = 1;
+                                                    loadData = false;
+                                                    _getMoreData();
                                                   },
                                                 );
                                               }
                                               if (index ==
-                                                  (specIndex == 0
-                                                      ? sportData.data.length +
-                                                          1
-                                                      : infoData.data.length +
-                                                          1)) {
+                                                  data.data.length + 1) {
                                                 return CustomScrollLoading(
-                                                  loading: specIndex == 0
-                                                      ? loadSportData
-                                                      : loadInfoData,
+                                                  loading: loadData,
                                                 );
                                               }
                                               return WebTableRowWidget(
-                                                data: specIndex == 0
-                                                    ? sportData.data[index - 1]
-                                                    : infoData.data[index - 1],
-                                                isExpanded: specIndex == 0
-                                                    ? sportIndex == index
-                                                    : infoIndex == index,
+                                                data: data.data[index - 1],
+                                                isExpanded:
+                                                    journalIndex == index,
                                                 onTap: () {
-                                                  if (specIndex == 0) {
-                                                    if (sportIndex == index) {
-                                                      sportIndex = -1;
-                                                    } else {
-                                                      sportIndex = index;
-                                                    }
+                                                  if (journalIndex == index) {
+                                                    journalIndex = -1;
                                                   } else {
-                                                    if (infoIndex == index) {
-                                                      infoIndex = -1;
-                                                    } else {
-                                                      infoIndex = index;
-                                                    }
+                                                    journalIndex = index;
                                                   }
                                                   setState(() {});
                                                 },
@@ -391,17 +283,12 @@ class _MainScreenState extends State<MainScreen> {
                                             separatorBuilder: (_, __) {
                                               return const Divider(height: 32);
                                             },
-                                            itemCount: specIndex == 0
-                                                ? sportData.data.length + 2
-                                                : infoData.data.length + 2,
+                                            itemCount: data.data.length + 2,
                                           ),
                                         ),
                                       ),
                                   ],
                                 ),
-
-                                /// spec search dialog added
-                                /// shown when spec search active
                                 if (showCenterDialog)
                                   Positioned(
                                     top: 56,
@@ -413,14 +300,11 @@ class _MainScreenState extends State<MainScreen> {
                                         dropDownController.text = name;
                                         showCenterDialog = false;
                                         specIndex = index;
-                                        if (specIndex == 0) {
-                                          _getMoreSportData();
-                                          loadSportData = false;
-                                        } else {
-                                          _getMoreInfoData();
-                                          loadInfoData = false;
-                                        }
-                                        setState(() {});
+                                        categoryEnum =
+                                            newSpecData[index].category;
+                                        page = 1;
+                                        loadData = false;
+                                        _getMoreData();
                                       },
                                     ),
                                   ),
@@ -456,72 +340,46 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  void _getMoreSportData() {
-    if (!loadSportData) {
-      addSportData = true;
+  void _getMoreData() {
+    if (!loadData) {
+      addData = true;
       BlocProvider.of<HomeBloc>(context).add(
-        AllSportJournalsEvent(
-          sportPage,
-          perPage,
-          priceSort,
-          nextDateSort,
-          nextDateDeadlineSort,
-          acceptSort,
-          generalSort,
+        AllJournalsEvent(
+          categoryEnum,
+          page,
+          sortIndex,
+          sortType,
           search,
         ),
       );
-      sportPage++;
+      page++;
     }
   }
 
-  void _getMoreInfoData() {
-    if (!loadInfoData) {
-      addInfoData = true;
-      BlocProvider.of<HomeBloc>(context).add(
-        AllInfoJournalsEvent(
-          infoPage,
-          perPage,
-          priceSort,
-          nextDateSort,
-          nextDateDeadlineSort,
-          acceptSort,
-          generalSort,
-          search,
-        ),
-      );
-      infoPage++;
-    }
-  }
-
-  /// on mobile sort method added
   void onMobileSort(String sort, int index) {
     selectedSort = sort;
     sortIndex = index;
-    priceSort = null;
-    nextDateSort = null;
-    nextDateDeadlineSort = null;
-    acceptSort = null;
-    generalSort = null;
-    if (index == 0) {
-      priceSort = 'asc';
-    } else if (index == 1) {
-      nextDateSort = 'asc';
-    } else if (index == 2) {
-      nextDateDeadlineSort = 'asc';
-    } else if (index == 3) {
-      acceptSort = 'asc';
-    } else if (index == 4) {
-      generalSort = 'asc';
-    }
-    if (specIndex == 0) {
-      sportPage = 1;
-      loadSportData = false;
-      _getMoreSportData();
-    } else {
-      infoPage = 1;
-      loadInfoData = false;
-      _getMoreInfoData();
+    sortType = 'asc';
+    page = 1;
+    loadData = false;
+    _getMoreData();
+  }
+
+  void _onChange(String obj) {
+    if (screenIndex == 0) {
+      const duration = Duration(milliseconds: 1200);
+      if (searchOnStoppedTyping != null) {
+        searchOnStoppedTyping!.cancel();
+      }
+      searchOnStoppedTyping = Timer(
+        duration,
+        () {
+          search = obj;
+          page = 1;
+          loadData = false;
+          _getMoreData();
+        },
+      );
     }
   }
 }

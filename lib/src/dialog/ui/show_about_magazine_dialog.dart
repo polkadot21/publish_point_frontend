@@ -30,7 +30,8 @@ class _ShowAboutMagazineDialogState extends State<ShowAboutMagazineDialog> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQueryData.fromWindow(
+      data: MediaQueryData.fromView(
+        // ignore: deprecated_member_use
         WidgetsBinding.instance.window,
       ),
       child: SafeArea(

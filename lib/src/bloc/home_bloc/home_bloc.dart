@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:publishpoint/src/model/api/journal_list_model.dart';
+import 'package:publishpoint/src/model/api/category_enum.dart';
 import 'package:publishpoint/src/model/http_result.dart';
 import 'package:publishpoint/src/repository/home_repository.dart';
 
@@ -13,58 +14,53 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final RepositoryHome repository;
 
   HomeBloc({required this.repository}) : super(UnAuthenticated()) {
-    /// sport journals
-    on<AllSportJournalsEvent>((event, emit) async {
-      emit(LoadingSportJournalsState());
+    /// journals
+    on<AllJournalsEvent>((event, emit) async {
+      emit(LoadingJournalsState());
 
-      HttpResult response = await repository.getJournals(
-        true,
-        event.page,
-        event.perPage,
-        event.sortByPrice,
-        event.sortByNextIssueDate,
-        event.sortByNextIssueDeadline,
-        event.sortByAccept,
-        event.sortByGeneral,
-        event.search,
-      );
-      if (response.isSuccess) {
-        JournalListModel data = JournalListModel.fromJson(
-          response.result,
-        );
-        emit(SuccessSportJournalsState(data, event.page));
-      } else if (response.status == -1) {
-        emit(ErrorSportJournalsState('Utils.errorMessage(response)'));
-      } else {
-        emit(ErrorSportJournalsState('Utils.errorMessage(response)'));
+      String? sortByPrice,
+          sortByNextIssueDate,
+          sortByNextIssueDeadline,
+          sortByAccept,
+          sortByGeneral;
+      switch (event.sortIndex) {
+        case 0:
+          sortByPrice = event.sortType;
+          break;
+        case 1:
+          sortByNextIssueDate = event.sortType;
+          break;
+        case 2:
+          sortByNextIssueDeadline = event.sortType;
+          break;
+        case 3:
+          sortByAccept = event.sortType;
+          break;
+        case 4:
+          sortByGeneral = event.sortType;
+          break;
+        default:
+          '';
       }
-    });
-
-    /// info journals
-
-    on<AllInfoJournalsEvent>((event, emit) async {
-      emit(LoadingInfoJournalsState());
-
       HttpResult response = await repository.getJournals(
-        false,
+        event.specEnum,
         event.page,
-        event.perPage,
-        event.sortByPrice,
-        event.sortByNextIssueDate,
-        event.sortByNextIssueDeadline,
-        event.sortByAccept,
-        event.sortByGeneral,
+        sortByPrice,
+        sortByNextIssueDate,
+        sortByNextIssueDeadline,
+        sortByAccept,
+        sortByGeneral,
         event.search,
       );
       if (response.isSuccess) {
         JournalListModel data = JournalListModel.fromJson(
           response.result,
         );
-        emit(SuccessInfoJournalsState(data, event.page));
+        emit(SuccessJournalsState(data, event.page));
       } else if (response.status == -1) {
-        emit(ErrorInfoJournalsState('Internet error'));
+        emit(ErrorJournalsState('Utils.errorMessage(response)'));
       } else {
-        emit(ErrorInfoJournalsState('Socket error'));
+        emit(ErrorJournalsState('Utils.errorMessage(response)'));
       }
     });
   }

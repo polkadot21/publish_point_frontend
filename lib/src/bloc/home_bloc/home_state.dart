@@ -9,51 +9,26 @@ class UnAuthenticated extends HomeState {
 }
 
 /// all sport journals
-class SuccessSportJournalsState extends HomeState {
+class SuccessJournalsState extends HomeState {
   final JournalListModel data;
   final int page;
 
-  SuccessSportJournalsState(this.data, this.page);
+  SuccessJournalsState(this.data, this.page);
 
   @override
   List<Object?> get props => [data, page];
 }
 
-class ErrorSportJournalsState extends HomeState {
+class ErrorJournalsState extends HomeState {
   final String msg;
 
-  ErrorSportJournalsState(this.msg);
+  ErrorJournalsState(this.msg);
 
   @override
   List<Object?> get props => [msg];
 }
 
-class LoadingSportJournalsState extends HomeState {
-  @override
-  List<Object?> get props => [];
-}
-
-/// all journals
-class SuccessInfoJournalsState extends HomeState {
-  final JournalListModel data;
-  final int page;
-
-  SuccessInfoJournalsState(this.data, this.page);
-
-  @override
-  List<Object?> get props => [data, page];
-}
-
-class ErrorInfoJournalsState extends HomeState {
-  final String msg;
-
-  ErrorInfoJournalsState(this.msg);
-
-  @override
-  List<Object?> get props => [msg];
-}
-
-class LoadingInfoJournalsState extends HomeState {
+class LoadingJournalsState extends HomeState {
   @override
   List<Object?> get props => [];
 }

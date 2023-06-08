@@ -1,3 +1,5 @@
+import 'package:publishpoint/src/model/api/category_enum.dart';
+
 class SpecListModel {
   final List<SpecData> data;
 
@@ -26,12 +28,14 @@ class SpecData {
   final String name;
   final String desc;
   final int status;
+  final CategoryEnum category;
 
   SpecData({
     required this.id,
     required this.name,
     required this.desc,
     required this.status,
+    required this.category,
   });
 
   SpecData copyWith({
@@ -39,12 +43,14 @@ class SpecData {
     String? name,
     String? desc,
     int? status,
+    CategoryEnum? category,
   }) =>
       SpecData(
         id: id ?? this.id,
         name: name ?? this.name,
         desc: desc ?? this.desc,
         status: status ?? this.status,
+        category: category ?? this.category,
       );
 
   factory SpecData.fromJson(Map<String, dynamic> json) => SpecData(
@@ -52,5 +58,6 @@ class SpecData {
         name: json["name"] ?? '',
         desc: json["desc"] ?? '',
         status: json["status"] ?? 0,
+        category: json["category"] ?? CategoryEnum.psychology,
       );
 }

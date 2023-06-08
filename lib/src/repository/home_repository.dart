@@ -1,11 +1,11 @@
+import 'package:publishpoint/src/model/api/category_enum.dart';
 import 'package:publishpoint/src/model/http_result.dart';
 import 'package:publishpoint/src/provider/home/home_provider.dart';
 
 abstract class RepositoryHome {
   Future<HttpResult> getJournals(
-    bool isSport,
+    CategoryEnum category,
     int page,
-    int perPage,
     String? sortByPrice,
     String? sortByNextIssueDate,
     String? sortByNextIssueDeadline,
@@ -20,9 +20,8 @@ class HomeRepository implements RepositoryHome {
 
   @override
   Future<HttpResult> getJournals(
-    bool isSport,
+    CategoryEnum category,
     int page,
-    int perPage,
     String? sortByPrice,
     String? sortByNextIssueDate,
     String? sortByNextIssueDeadline,
@@ -31,9 +30,8 @@ class HomeRepository implements RepositoryHome {
     String? search,
   ) {
     return homeProvider.getJournals(
-      isSport,
+      category,
       page,
-      perPage,
       sortByPrice,
       sortByNextIssueDate,
       sortByNextIssueDeadline,
