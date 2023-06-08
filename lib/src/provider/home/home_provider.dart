@@ -5,7 +5,6 @@ import 'package:publishpoint/src/utils/utils.dart';
 
 class HomeProvider extends ApiProvider {
   /// get journals
-
   Future<HttpResult> getJournals(
     CategoryEnum category,
     int page,
@@ -16,7 +15,7 @@ class HomeProvider extends ApiProvider {
     String? sortByGeneral,
     String? search,
   ) async {
-    int perPage = 10;
+    const int perPage = 10;
     String params = 'by_price_per_page=asc';
 
     String mainParam = 'page=$page&per_page=$perPage&';
@@ -31,7 +30,8 @@ class HomeProvider extends ApiProvider {
       params = 'by_accepted_perc=$sortByAccept';
     } else if (sortByGeneral != null) {
       params = 'by_general_score=$sortByGeneral';
-    } else if (search != null) {
+    }
+    if (search != null) {
       params += '&search=$search';
     }
     params = mainParam + params;
