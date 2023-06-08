@@ -34,7 +34,7 @@ class JournalData {
   final String name;
   final String descriptionInfo;
   final String submitPaperLink;
-  final int pricePerPage;
+  final int pricePerPaper;
   final String nextIssueDate;
   final String nextIssueDeadline;
   final int acceptedPerc;
@@ -47,7 +47,7 @@ class JournalData {
     required this.name,
     required this.descriptionInfo,
     required this.submitPaperLink,
-    required this.pricePerPage,
+    required this.pricePerPaper,
     required this.nextIssueDate,
     required this.nextIssueDeadline,
     required this.acceptedPerc,
@@ -61,7 +61,7 @@ class JournalData {
     String? name,
     String? descriptionInfo,
     String? submitPaperLink,
-    int? pricePerPage,
+    int? pricePerPaper,
     String? nextIssueDate,
     String? nextIssueDeadline,
     int? acceptedPerc,
@@ -74,7 +74,7 @@ class JournalData {
         name: name ?? this.name,
         descriptionInfo: descriptionInfo ?? this.descriptionInfo,
         submitPaperLink: submitPaperLink ?? this.submitPaperLink,
-        pricePerPage: pricePerPage ?? this.pricePerPage,
+        pricePerPaper: pricePerPaper ?? this.pricePerPaper,
         nextIssueDate: nextIssueDate ?? this.nextIssueDate,
         nextIssueDeadline: nextIssueDeadline ?? this.nextIssueDeadline,
         acceptedPerc: acceptedPerc ?? this.acceptedPerc,
@@ -88,7 +88,7 @@ class JournalData {
         name: json["name"] ?? '',
         descriptionInfo: json["description_info"] ?? '',
         submitPaperLink: json["submit_paper_link"] ?? '',
-        pricePerPage: json["price_per_page"] ?? 0,
+        pricePerPaper: json["price_per_paper"] ?? 0,
         nextIssueDate: json["next_issue_date"] ?? '',
         nextIssueDeadline: json["next_issue_deadline"] ?? '',
         acceptedPerc: json["accepted_perc"] ?? 0,
