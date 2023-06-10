@@ -22,7 +22,6 @@ class WebMagazineCenterWidget extends StatelessWidget {
           ),
           margin: const EdgeInsets.symmetric(
             vertical: 24,
-            horizontal: 20,
           ),
           child: Stack(
             alignment: Alignment.centerLeft,

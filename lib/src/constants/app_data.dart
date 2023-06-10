@@ -19,5 +19,14 @@ class AppData {
       status: 1,
       category: CategoryEnum.computerScience,
     ),
+    SpecData(
+      id: 3,
+      name:
+          '19.00.01 - Общая психология, психология личности, история психологии',
+      desc:
+          '19.00.01 - Общая психология, психология личности, история психологии',
+      status: 0,
+      category: CategoryEnum.computerScience,
+    ),
   ];
 }

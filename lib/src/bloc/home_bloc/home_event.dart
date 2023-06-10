@@ -29,3 +29,31 @@ class AllJournalsEvent extends HomeEvent {
         sortType,
       ];
 }
+
+/// change index
+class ChangeIndexEvent extends HomeEvent {
+  final String type;
+  final int index;
+
+  ChangeIndexEvent(
+    this.type,
+    this.index,
+  );
+
+  @override
+  List<Object> get props => [
+        type,
+        index,
+      ];
+}
+
+/// show dropdown dialog
+class ChangeStatusEvent extends HomeEvent {
+  final bool status;
+  final String type;
+
+  ChangeStatusEvent(this.status, this.type);
+
+  @override
+  List<Object> get props => [status, type];
+}

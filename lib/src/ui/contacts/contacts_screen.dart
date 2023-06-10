@@ -16,7 +16,6 @@ class ContactsScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(
             vertical: 24,
-            horizontal: 20,
           ),
           child: Container(
             width: MediaQuery.of(context).size.width -

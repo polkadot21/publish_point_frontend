@@ -17,6 +17,7 @@ import 'package:publishpoint/src/utils/utils.dart';
 import 'package:publishpoint/src/widget/app/custom_scroll_loading.dart';
 import 'package:publishpoint/src/widget/app/magazine_search_widget.dart';
 import 'package:publishpoint/src/widget/app/sort_by_mobile_widget.dart';
+import 'package:publishpoint/src/widget/app/spec_desc_widget.dart';
 import 'package:publishpoint/src/widget/mobile/magazine_item_widget.dart';
 import 'package:publishpoint/src/widget/web/magazine/web_magazine_center_widget.dart';
 import 'package:publishpoint/src/widget/web/magazine/web_table_header_widget.dart';
@@ -26,7 +27,12 @@ import 'package:publishpoint/src/widget/app/bottom_row_widget.dart';
 import 'package:publishpoint/src/widget/app/main_app_bar.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  final int? index;
+
+  const MainScreen({
+    Key? key,
+    this.index,
+  }) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -52,10 +58,13 @@ class _MainScreenState extends State<MainScreen> {
   List<SpecData> newSpecData = [];
   List<SpecData> specData = AppData.specData;
 
-  bool showCenterDialog = false;
+  bool showDropdown = false, showSpecDesc = true;
 
   @override
   void initState() {
+    if (widget.index != null) {
+      screenIndex = widget.index!;
+    }
     _getMoreData();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
@@ -99,13 +108,26 @@ class _MainScreenState extends State<MainScreen> {
               }
             }
             loadData = !state.data.next;
+          } else if (state is ChangeIndexState) {
+            if (state.type == 'screen') {
+              screenIndex = state.index;
+            } else if (state.type == 'journal') {
+              journalIndex = state.index;
+            }
+          } else if (state is ChangeStatusState) {
+            if (state.type == 'dropdown') {
+              showDropdown = state.status;
+            } else if (state.type == 'search') {
+              onSearchActive = state.status;
+            } else if (state.type == 'spec_desc') {
+              showSpecDesc = state.status;
+            }
           }
           return GestureDetector(
             onTap: () {
               Utils.closeKeyboard(context);
               onSearchActive = false;
-              showCenterDialog = false;
-              setState(() {});
+              _changeStatus(false, 'dropdown');
             },
             child: Scaffold(
               backgroundColor: AppColor.bg,
@@ -114,17 +136,21 @@ class _MainScreenState extends State<MainScreen> {
                 elevation: 0,
                 backgroundColor: AppColor.dark,
                 toolbarHeight: 72,
+                leading: const SizedBox(),
+                leadingWidth: 0,
                 title: MainAppBar(
-                  onMenuTap: (int val) {
-                    screenIndex = val;
-                    setState(() {});
+                  onMenuTap: (int index) {
+                    _changeIndex('screen', index);
+                    _scrollController.animateTo(
+                      0,
+                      duration: const Duration(milliseconds: 1),
+                      curve: Curves.easeInOut,
+                    );
                   },
                   controller: textController,
                   onSearchActive: onSearchActive,
                   onSearch: (bool active) {
-                    setState(() {
-                      onSearchActive = active;
-                    });
+                    _changeStatus(active, 'search');
                     if (!active) {
                       search = null;
                       page = 1;
@@ -138,197 +164,218 @@ class _MainScreenState extends State<MainScreen> {
               body: Column(
                 children: [
                   Expanded(
-                    child: ListView(
+                    child: SingleChildScrollView(
                       controller: _scrollController,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal:
-                                ResponsiveWidget.marginHorizontal(context),
-                          ),
-                          child: screenIndex == 0
-                              ? const WebMagazineCenterWidget()
-                              : screenIndex == 1
-                                  ? const AboutProjectScreen()
-                                  : screenIndex == 2
-                                      ? const ContactsScreen()
-                                      : const PrivacyScreen(),
-                        ),
-                        if (ResponsiveWidget.isSmallScreen(context) ||
-                            ResponsiveWidget.isMediumScreen(context))
-                          const SizedBox(height: 20),
-                        if (screenIndex == 0)
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(24),
-                              color: AppColor.white,
-                              border: Border.all(
-                                color: AppColor.lightGray,
-                                width: 1,
-                              ),
-                            ),
-                            margin: EdgeInsets.symmetric(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
                               horizontal:
                                   ResponsiveWidget.marginHorizontal(context),
                             ),
-                            padding: const EdgeInsets.all(36),
-                            child: Stack(
-                              children: [
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    MagazineSearchWidget(
-                                      controller: dropDownController,
-                                      onChanged: (obj) {
-                                        showCenterDialog = true;
-                                        newSpecData = specData
-                                            .where(
-                                              (element) =>
-                                                  element.name.contains(obj),
-                                            )
-                                            .toList();
-                                        setState(() {});
-                                      },
-                                      onDropDownTap: () {
-                                        showCenterDialog = true;
-                                        setState(() {});
-                                      },
-                                    ),
-                                    const SizedBox(height: 16),
-                                    if (ResponsiveWidget.isMediumScreen(
-                                            context) ||
-                                        ResponsiveWidget.isSmallScreen(context))
-                                      SortByMobileWidget(
-                                        onSelect: (String sort, int index) {
-                                          onMobileSort(sort, index);
+                            child: screenIndex == 0
+                                ? const WebMagazineCenterWidget()
+                                : screenIndex == 1
+                                    ? const AboutProjectScreen()
+                                    : screenIndex == 2
+                                        ? const ContactsScreen()
+                                        : const PrivacyScreen(),
+                          ),
+                          if (ResponsiveWidget.isSmallScreen(context) ||
+                              ResponsiveWidget.isMediumScreen(context))
+                            const SizedBox(height: 20),
+                          if (screenIndex == 0)
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(24),
+                                color: AppColor.white,
+                                border: Border.all(
+                                  color: AppColor.lightGray,
+                                  width: 1,
+                                ),
+                              ),
+                              margin: EdgeInsets.symmetric(
+                                horizontal:
+                                    ResponsiveWidget.marginHorizontal(context),
+                              ),
+                              padding: const EdgeInsets.all(36),
+                              child: Stack(
+                                children: [
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      MagazineSearchWidget(
+                                        controller: dropDownController,
+                                        onChanged: (obj) {
+                                          newSpecData = specData
+                                              .where(
+                                                (element) =>
+                                                    element.name.contains(obj),
+                                              )
+                                              .toList();
+                                          _changeStatus(true, 'dropdown');
                                         },
-                                        selectedSort: selectedSort,
+                                        onDropDownTap: () {
+                                          _changeStatus(true, 'dropdown');
+                                        },
                                       ),
-                                    if (ResponsiveWidget.isMediumScreen(
-                                            context) ||
-                                        ResponsiveWidget.isSmallScreen(context))
-                                      ListView.separated(
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemBuilder: (context, index) {
-                                          if (index == data.data.length) {
-                                            return CustomScrollLoading(
-                                              loading: loadData,
+                                      if (showSpecDesc)
+                                        const SizedBox(height: 16),
+                                      if (showSpecDesc)
+                                        SpecDescWidget(
+                                          desc: specData[specIndex].desc,
+                                          onClose: () {
+                                            _changeStatus(
+                                              false,
+                                              'spec_desc',
                                             );
-                                          }
-                                          return MagazineItemWidget(
-                                            data: data.data[index],
-                                            isExpanded: isAboutMagazineOpen,
-                                            onTap: () {
-                                              journalIndex = index;
-                                              setState(() {});
-                                            },
-                                          );
-                                        },
-                                        separatorBuilder: (_, __) {
-                                          return const Divider(height: 32);
-                                        },
-                                        itemCount: data.data.length + 1,
-                                      )
-                                    else
-                                      SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: SizedBox(
-                                          width: magazineWidth,
-                                          child: ListView.separated(
-                                            shrinkWrap: true,
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            itemBuilder: (context, index) {
-                                              if (index == 0) {
-                                                return WebTableHeaderWidget(
-                                                  sortIndex: sortIndex,
-                                                  sortType: sortType,
-                                                  onSort: (
-                                                    String sortTypeVal,
-                                                    int index,
-                                                    String sort,
-                                                  ) {
-                                                    selectedSort = sort;
-                                                    sortIndex = index;
-                                                    sortType = sortTypeVal;
-                                                    page = 1;
-                                                    loadData = false;
-                                                    _getMoreData();
+                                          },
+                                        ),
+                                      const SizedBox(height: 32),
+                                      if (ResponsiveWidget.isMediumScreen(
+                                              context) ||
+                                          ResponsiveWidget.isSmallScreen(
+                                              context))
+                                        SortByMobileWidget(
+                                          onSelect: (String sort, int index) {
+                                            onMobileSort(sort, index);
+                                          },
+                                          selectedSort: selectedSort,
+                                        ),
+                                      if (ResponsiveWidget.isMediumScreen(
+                                              context) ||
+                                          ResponsiveWidget.isSmallScreen(
+                                              context))
+                                        ListView.separated(
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemBuilder: (context, index) {
+                                            if (index == data.data.length) {
+                                              return CustomScrollLoading(
+                                                loading: loadData,
+                                              );
+                                            }
+                                            return MagazineItemWidget(
+                                              data: data.data[index],
+                                              isExpanded: isAboutMagazineOpen,
+                                              onTap: () {
+                                                _changeIndex('journal', index);
+                                              },
+                                            );
+                                          },
+                                          separatorBuilder: (_, __) {
+                                            return const Divider(height: 32);
+                                          },
+                                          itemCount: data.data.length + 1,
+                                        )
+                                      else
+                                        SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: SizedBox(
+                                            width: magazineWidth,
+                                            child: ListView.separated(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              itemBuilder: (context, index) {
+                                                if (index == 0) {
+                                                  return WebTableHeaderWidget(
+                                                    sortIndex: sortIndex,
+                                                    sortType: sortType,
+                                                    onSort: (
+                                                      String sortTypeVal,
+                                                      int index,
+                                                      String sort,
+                                                    ) {
+                                                      selectedSort = sort;
+                                                      sortIndex = index;
+                                                      sortType = sortTypeVal;
+                                                      page = 1;
+                                                      loadData = false;
+                                                      _getMoreData();
+                                                    },
+                                                  );
+                                                }
+                                                if (index ==
+                                                    data.data.length + 1) {
+                                                  return CustomScrollLoading(
+                                                    loading: loadData,
+                                                  );
+                                                }
+                                                return WebTableRowWidget(
+                                                  data: data.data[index - 1],
+                                                  isExpanded:
+                                                      journalIndex == index,
+                                                  onTap: () {
+                                                    if (journalIndex == index) {
+                                                      _changeIndex(
+                                                          'journal', -1);
+                                                    } else {
+                                                      _changeIndex(
+                                                          'journal', index);
+                                                    }
                                                   },
                                                 );
-                                              }
-                                              if (index ==
-                                                  data.data.length + 1) {
-                                                return CustomScrollLoading(
-                                                  loading: loadData,
-                                                );
-                                              }
-                                              return WebTableRowWidget(
-                                                data: data.data[index - 1],
-                                                isExpanded:
-                                                    journalIndex == index,
-                                                onTap: () {
-                                                  if (journalIndex == index) {
-                                                    journalIndex = -1;
-                                                  } else {
-                                                    journalIndex = index;
-                                                  }
-                                                  setState(() {});
-                                                },
-                                              );
-                                            },
-                                            separatorBuilder: (_, __) {
-                                              return const Divider(height: 32);
-                                            },
-                                            itemCount: data.data.length + 2,
+                                              },
+                                              separatorBuilder: (_, __) {
+                                                return const Divider(
+                                                    height: 32);
+                                              },
+                                              itemCount: data.data.length + 2,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                  ],
-                                ),
-                                if (showCenterDialog)
-                                  Positioned(
-                                    top: 56,
-                                    width: 296,
-                                    child: ShowSearchResultDialog(
-                                      data: newSpecData,
-                                      chosen: specIndex,
-                                      onChoose: (String name, int index) {
-                                        dropDownController.text = name;
-                                        showCenterDialog = false;
-                                        specIndex = index;
-                                        categoryEnum =
-                                            newSpecData[index].category;
-                                        page = 1;
-                                        loadData = false;
-                                        _getMoreData();
-                                      },
-                                    ),
+                                    ],
                                   ),
-                              ],
+                                  if (showDropdown)
+                                    Positioned(
+                                      top: 56,
+                                      width: 296,
+                                      child: ShowSearchResultDialog(
+                                        data: newSpecData,
+                                        chosen: specIndex,
+                                        onChoose: (String name, int index) {
+                                          dropDownController.text = name;
+                                          showDropdown = false;
+                                          specIndex = index;
+                                          categoryEnum =
+                                              newSpecData[index].category;
+                                          page = 1;
+                                          loadData = false;
+                                          showSpecDesc = true;
+                                          _getMoreData();
+                                        },
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
-                          ),
-                        const SizedBox(height: 72),
-                        if (ResponsiveWidget.isSmallScreen(context) ||
-                            ResponsiveWidget.isMediumScreen(context))
-                          BottomColumnWidget(
-                            onTap: () {
-                              screenIndex = 3;
-                              setState(() {});
-                            },
-                          ),
-                      ],
+                          const SizedBox(height: 72),
+                          if (ResponsiveWidget.isSmallScreen(context) ||
+                              ResponsiveWidget.isMediumScreen(context))
+                            BottomColumnWidget(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/privacy',
+                                );
+                              },
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                   if (ResponsiveWidget.isLargeScreen(context) ||
                       ResponsiveWidget.isCustomSize(context))
                     BottomRowWidget(
                       onTap: () {
-                        screenIndex = 3;
-                        setState(() {});
+                        Navigator.pushNamed(
+                          context,
+                          '/privacy',
+                        );
                       },
                     ),
                 ],
@@ -381,5 +428,20 @@ class _MainScreenState extends State<MainScreen> {
         },
       );
     }
+  }
+
+  void _changeIndex(String type, int index) {
+    BlocProvider.of<HomeBloc>(context).add(
+      ChangeIndexEvent(
+        type,
+        index,
+      ),
+    );
+  }
+
+  void _changeStatus(bool status, String type) {
+    BlocProvider.of<HomeBloc>(context).add(
+      ChangeStatusEvent(status, type),
+    );
   }
 }

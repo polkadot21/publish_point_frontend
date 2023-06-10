@@ -16,7 +16,6 @@ class AboutProjectScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(
             vertical: 24,
-            horizontal: 20,
           ),
           child: Container(
             width: MediaQuery.of(context).size.width -
@@ -51,7 +50,7 @@ class AboutProjectScreen extends StatelessWidget {
                               'assets/images/logo_image2.png',
                             ),
                           ),
-                         Text(
+                        Text(
                           'О проекте',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,

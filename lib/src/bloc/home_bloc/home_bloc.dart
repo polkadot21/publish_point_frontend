@@ -63,5 +63,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(ErrorJournalsState('Utils.errorMessage(response)'));
       }
     });
+
+    /// change index
+    on<ChangeIndexEvent>((event, emit) {
+      emit(UnAuthenticated());
+      emit(ChangeIndexState(event.type, event.index));
+    });
+
+    /// show dropdown
+    on<ChangeStatusEvent>((event, emit) {
+      emit(UnAuthenticated());
+      emit(ChangeStatusState(event.status, event.type));
+    });
   }
 }
